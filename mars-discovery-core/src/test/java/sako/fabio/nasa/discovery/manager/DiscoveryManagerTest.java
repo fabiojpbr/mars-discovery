@@ -16,6 +16,7 @@ import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
+import sako.fabio.nasa.discovery.exceptions.ProbeNotFound;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
 
 public class DiscoveryManagerTest {
@@ -50,7 +51,7 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test
-	public void testCommand() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException{
+	public void testCommand() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
@@ -67,7 +68,7 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test(expected=InvalidCommandException.class)
-	public void testCommandInvalid() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException{
+	public void testCommandInvalid() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
@@ -78,7 +79,7 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test(expected=BusyPlaceException.class)
-	public void testCommandConflictsPlaces() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException{
+	public void testCommandConflictsPlaces() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
@@ -91,6 +92,13 @@ public class DiscoveryManagerTest {
 		CardinalPoint cardinalPointInitial2 = CardinalPoint.N;
 		discoveryManager.addProbe(id2, x2 , y2, cardinalPointInitial2);
 		
+		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
+		discoveryManager.command(id, commands);
+	}
+	
+	@Test(expected=ProbeNotFound.class)
+	public void testCommandProbeNotFound() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
+		Identify<String> id = new Identify<String>("probe_1");		
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
 		discoveryManager.command(id, commands);
 	}

@@ -1,6 +1,5 @@
 package sako.fabio.nasa.discovery.manager;
 
-import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 
 import sako.fabio.nasa.discovery.bean.Coordination;
@@ -13,6 +12,7 @@ import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
+import sako.fabio.nasa.discovery.exceptions.ProbeNotFound;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
 
 public class DiscoveryManager implements DiscoveryManagerInterface {
@@ -33,9 +33,11 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		return probe;
 	}
 
-	public Probe command(Identify<String> name, Collection<String> commands) throws BordersInvasionException, BusyPlaceException, InvalidCommandException {
-		
+	public Probe command(Identify<String> name, Collection<String> commands) throws BordersInvasionException, BusyPlaceException, InvalidCommandException, ProbeNotFound {
 		Probe probe = plateau.getProbeById(name);
+		if(probe == null){
+			throw new ProbeNotFound();
+		}
 		for(String command: commands){
 			try{
 				Command.valueOf(command).execute(probe);

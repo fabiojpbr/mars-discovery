@@ -45,11 +45,7 @@ public class Plateau{
 	
 	public Probe getProbeById(Identify<String> id){
 		Coordination coordination = mapCoordinationKey.get(id);
-		Probe probe = null;
-		if(coordination != null){
-			probe = mapElementCoordination.get(coordination);
-		}
-		return probe;
+		return mapElementCoordination.get(coordination);
 	}
 	
 }

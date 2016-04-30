@@ -46,17 +46,17 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	
 	public void turnRight(){
 		this.cardinalPoint = cardinalPoint.getNextRight();
-		LOGGER.info(String.format("Turn Right: New Point: %s", cardinalPoint));
+		LOGGER.info(String.format("Probe: %s CMD: Turn Right, New Point: %s", this.id,cardinalPoint));
 	}
 	
 	public void turnLeft(){
 		this.cardinalPoint = cardinalPoint.getNextLeft();
-		LOGGER.info(String.format("Turn Left: New Point: %s", cardinalPoint));
+		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.id,cardinalPoint));
 	}
 	
 	public void move() throws BordersInvasionException, BusyPlaceException{
 		this.cardinalPoint.move(this);
-		LOGGER.info(String.format("Move: New Position: (%s)", this.coordination));
+		LOGGER.info(String.format("Probe: %s CMD: Move, New Position: (%s)", this.id,coordination));
 
 	}
 
