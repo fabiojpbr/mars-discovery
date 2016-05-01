@@ -4,12 +4,21 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import sako.fabio.nasa.discovery.enums.CardinalPoint;
-import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
-import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.interfaces.AxisMovable;
 import sako.fabio.nasa.discovery.interfaces.Controllable;
-
+/**
+ * Classe que representa a Sonda
+ * @author fabio
+ *
+ */
+@JacksonXmlRootElement(localName="probe")
 public class Probe implements Serializable, AxisMovable,Controllable{
 	
 	private static final Logger LOGGER = Logger.getLogger(Probe.class);
@@ -23,23 +32,41 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	private Coordination coordination;
 	private Plateau plateau;
 	
-	public Probe(Identify<String> id, int posX, int posY, CardinalPoint cardinalPoint, Plateau plateau) {
+	@JsonCreator
+	public Probe(
+			@JsonProperty("id")
+			Identify<String> id,
+			@JsonProperty("coordination")
+			Coordination coordination,
+			@JsonProperty("cardinalPoint")
+			
+			CardinalPoint cardinalPoint) {
 		super();
 		this.cardinalPoint = cardinalPoint;
-		this.plateau = plateau;
-		this.coordination = new Coordination(posX, posY);
+		this.coordination = coordination;
 		this.id = id;
 	}
 	
+	public Probe(Identify<String> id, Coordination coordination, CardinalPoint cardinalPoint, Plateau plateau) {
+		this(id,coordination,cardinalPoint);
+		this.plateau = plateau;
+	}
 	
+	
+	@JacksonXmlElementWrapper(useWrapping=false)
+	@JacksonXmlProperty(localName="cardinalPoint")
 	public CardinalPoint getCardinalPoint() {
 		return cardinalPoint;
 	}
-
+	
+	@JacksonXmlElementWrapper(useWrapping=false)
+	@JacksonXmlProperty(localName="coordination")
 	public Coordination getCoordination() {
 		return coordination;
 	}
 	
+	@JacksonXmlElementWrapper(useWrapping=false)
+	@JacksonXmlProperty(localName="id")
 	public Identify<String> getId() {
 		return id;
 	}
@@ -54,33 +81,33 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.id,cardinalPoint));
 	}
 	
-	public void move() throws BordersInvasionException, BusyPlaceException{
+	public void move(){
 		this.cardinalPoint.move(this);
 		LOGGER.info(String.format("Probe: %s CMD: Move, New Position: (%s)", this.id,coordination));
 
 	}
 
-	public void upX() throws BordersInvasionException, BusyPlaceException{
+	public void upX(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() + 1, this.coordination.getY());
 		alterCoordination(newCoordination);
 	}
 
-	public void downX()  throws BordersInvasionException, BusyPlaceException{
+	public void downX(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() - 1, this.coordination.getY());
 		alterCoordination(newCoordination);
 	}
 
-	public void upY() throws BordersInvasionException, BusyPlaceException {
+	public void upY(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() , this.coordination.getY()+1);
 		alterCoordination(newCoordination);
 	}
 
-	public void downY()  throws BordersInvasionException, BusyPlaceException{
+	public void downY(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() , this.coordination.getY()-1);
 		alterCoordination(newCoordination);
 	}
 	
-	private void alterCoordination(Coordination newCoordination) throws BordersInvasionException, BusyPlaceException{
+	private void alterCoordination(Coordination newCoordination){
 		this.plateau.alterCoordination(newCoordination, this);
 		this.coordination = newCoordination;
 	}

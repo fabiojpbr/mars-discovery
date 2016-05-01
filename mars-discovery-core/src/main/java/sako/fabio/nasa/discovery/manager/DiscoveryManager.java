@@ -2,6 +2,8 @@ package sako.fabio.nasa.discovery.manager;
 
 import java.util.Collection;
 
+import org.springframework.stereotype.Service;
+
 import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.bean.Identify;
 import sako.fabio.nasa.discovery.bean.Plateau;
@@ -12,31 +14,34 @@ import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
-import sako.fabio.nasa.discovery.exceptions.ProbeNotFound;
+import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFound;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
-
+@Service
 public class DiscoveryManager implements DiscoveryManagerInterface {
 	private Plateau plateau;
 
 	public DiscoveryManager(Plateau plateau) {
-		super();
 		this.plateau = plateau;
 	}
+	
+	public DiscoveryManager() {
+		super();
+	}
 
-	public Probe addProbe(Identify<String> name, int posXInitial, int posYInitial, CardinalPoint cardinalPointInitial) throws BordersInvasionException, BusyPlaceException, AlreadyCreatedException {
+	public Probe addProbe(Identify<String> name, Coordination coordination, CardinalPoint cardinalPointInitial) throws BordersInvasionException, BusyPlaceException, AlreadyCreatedException {
 		if (plateau.getProbeById(name) != null){
 			throw new AlreadyCreatedException();
 		}
-		Probe probe = new Probe(name, posXInitial, posYInitial, cardinalPointInitial, this.plateau);
+		Probe probe = new Probe(name, coordination, cardinalPointInitial, this.plateau);
 		
-		plateau.alterCoordination(new Coordination(posXInitial, posYInitial), probe);
+		plateau.alterCoordination(coordination, probe);
 		return probe;
 	}
 
-	public Probe command(Identify<String> name, Collection<String> commands) throws BordersInvasionException, BusyPlaceException, InvalidCommandException, ProbeNotFound {
+	public Probe command(Identify<String> name, Collection<String> commands) throws BordersInvasionException, BusyPlaceException, InvalidCommandException, ObjectNasaNotFound {
 		Probe probe = plateau.getProbeById(name);
 		if(probe == null){
-			throw new ProbeNotFound();
+			throw new ObjectNasaNotFound();
 		}
 		for(String command: commands){
 			try{
@@ -48,5 +53,14 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		}
 		return probe;
 	}
+
+	public void setPlateau(Plateau plateau){
+		if(this.plateau != null){
+			throw new AlreadyCreatedException();
+		}
+		this.plateau = plateau;
+	}
+	
+	
 
 }

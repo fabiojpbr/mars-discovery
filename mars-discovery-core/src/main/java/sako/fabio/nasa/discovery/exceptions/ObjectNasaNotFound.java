@@ -1,6 +1,6 @@
 package sako.fabio.nasa.discovery.exceptions;
 
-public class ProbeNotFound extends Exception {
+public class ObjectNasaNotFound extends RuntimeException {
 
 	/**
 	 * 

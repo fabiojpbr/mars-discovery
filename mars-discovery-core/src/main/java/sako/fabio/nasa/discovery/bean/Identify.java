@@ -1,13 +1,42 @@
 package sako.fabio.nasa.discovery.bean;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+/**
+ * Classe que representa um ID
+ * 
+ * @author fabio
+ *
+ * @param <T>
+ *            Tipo que este ID irá representar
+ */
+@JacksonXmlRootElement(localName="identify")
 public class Identify<T> {
 	private T id;
-	
-	public Identify(T id) {
+
+	/**
+	 * Construtor
+	 * 
+	 * @param id
+	 *            recebe o valor do ID
+	 */
+	@JsonCreator
+	public Identify(@JsonProperty("id") T id) {
 		super();
 		this.id = id;
 	}
-	
+
+	/**
+	 * Recupera o valor do ID
+	 * 
+	 * @return
+	 */
+	@JacksonXmlElementWrapper(useWrapping=false)
+	@JacksonXmlProperty(localName="id")
 	public T getId() {
 		return id;
 	}
@@ -41,6 +70,5 @@ public class Identify<T> {
 	public String toString() {
 		return "Identify [id=" + id + "]";
 	}
-	
-	
+
 }

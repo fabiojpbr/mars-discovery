@@ -1,6 +1,6 @@
 package sako.fabio.nasa.discovery.exceptions;
 
-public class BusyPlaceException extends Exception {
+public class BusyPlaceException extends RuntimeException {
 
 	/**
 	 * 

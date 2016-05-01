@@ -1,6 +1,6 @@
 package sako.fabio.nasa.discovery.exceptions;
 
-public class InvalidCommandException extends Exception {
+public class InvalidCommandException extends RuntimeException {
 
 	/**
 	 * 

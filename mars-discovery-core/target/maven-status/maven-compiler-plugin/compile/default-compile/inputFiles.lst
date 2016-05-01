@@ -1,0 +1,15 @@
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/manager/interfaces/DiscoveryManagerInterface.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/exceptions/AlreadyCreatedException.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/bean/Plateau.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/exceptions/ProbeNotFound.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/exceptions/BusyPlaceException.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/exceptions/InvalidCommandException.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/interfaces/Controllable.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/bean/Coordination.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/interfaces/AxisMovable.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/enums/Command.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/enums/CardinalPoint.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/bean/Probe.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/manager/DiscoveryManager.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/exceptions/BordersInvasionException.java
+/home/fabio/Buscape/workspace/mars-discovery/mars-discovery-core/src/main/java/sako/fabio/nasa/discovery/bean/Identify.java

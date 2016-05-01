@@ -17,19 +17,19 @@ public enum CardinalPoint {
 	
 	N {
 		@Override
-		public void move(AxisMovable movableXY) throws BordersInvasionException, BusyPlaceException {
+		public void move(AxisMovable movableXY) {
 			movableXY.upY();
 			
 		}
 	},E {
 		@Override
-		public void move(AxisMovable movableXY) throws BordersInvasionException, BusyPlaceException {
+		public void move(AxisMovable movableXY) {
 			movableXY.upX();
 			
 		}
 	},S {
 		@Override
-		public void move(AxisMovable movableXY) throws BordersInvasionException, BusyPlaceException {
+		public void move(AxisMovable movableXY) {
 			movableXY.downY();
 			
 		}

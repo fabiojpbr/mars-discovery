@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import junit.framework.Assert;
+import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.bean.Identify;
 import sako.fabio.nasa.discovery.bean.Plateau;
 import sako.fabio.nasa.discovery.bean.Probe;
@@ -16,7 +17,7 @@ import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
-import sako.fabio.nasa.discovery.exceptions.ProbeNotFound;
+import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFound;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
 
 public class DiscoveryManagerTest {
@@ -33,7 +34,8 @@ public class DiscoveryManagerTest {
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
 		CardinalPoint cardinalPointInitial = CardinalPoint.N;
-		Probe probe = discoveryManager.addProbe(id, x , y, cardinalPointInitial);
+		Coordination coordination = new Coordination(x, y);
+		Probe probe = discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		Assert.assertNotNull(probe);
 		Assert.assertEquals(x, probe.getCoordination().getX());
 		Assert.assertEquals(y, probe.getCoordination().getY());
@@ -45,18 +47,23 @@ public class DiscoveryManagerTest {
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
 		CardinalPoint cardinalPointInitial = CardinalPoint.N;
-		discoveryManager.addProbe(id, x , y, cardinalPointInitial);
-		discoveryManager.addProbe(id, x , y, cardinalPointInitial);
+		Coordination coordination = new Coordination(x, y);
+
+		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
+		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		
 	}
 	
 	@Test
-	public void testCommand() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
+	public void testCommand() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
 		CardinalPoint cardinalPointInitial = CardinalPoint.N;
-		discoveryManager.addProbe(id, x , y, cardinalPointInitial);
+		Coordination coordination = new Coordination(x, y);
+
+		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
+
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
 		Probe probe = discoveryManager.command(id, commands);
 		int xExpected = 1;
@@ -68,36 +75,40 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test(expected=InvalidCommandException.class)
-	public void testCommandInvalid() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
+	public void testCommandInvalid() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
 		CardinalPoint cardinalPointInitial = CardinalPoint.N;
-		discoveryManager.addProbe(id, x , y, cardinalPointInitial);
+		Coordination coordination = new Coordination(x, y);
+
+		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		List<String> commands = Arrays.asList("L","M","L","M","L","x","L","M","M");
 		discoveryManager.command(id, commands);
 	}
 	
 	@Test(expected=BusyPlaceException.class)
-	public void testCommandConflictsPlaces() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
+	public void testCommandConflictsPlaces() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
 		CardinalPoint cardinalPointInitial = CardinalPoint.N;
-		discoveryManager.addProbe(id, x , y, cardinalPointInitial);
+		Coordination coordination = new Coordination(x, y);
+		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		
 		int x2 = 1;
 		int y2 = 3;
 		Identify<String> id2 = new Identify<String>("probe_2");
 		CardinalPoint cardinalPointInitial2 = CardinalPoint.N;
-		discoveryManager.addProbe(id2, x2 , y2, cardinalPointInitial2);
+		Coordination coordination2 = new Coordination(x2, y2);
+		discoveryManager.addProbe(id2, coordination2, cardinalPointInitial2);
 		
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
 		discoveryManager.command(id, commands);
 	}
 	
-	@Test(expected=ProbeNotFound.class)
-	public void testCommandProbeNotFound() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ProbeNotFound{
+	@Test(expected=ObjectNasaNotFound.class)
+	public void testCommandProbeNotFound() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
 		Identify<String> id = new Identify<String>("probe_1");		
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
 		discoveryManager.command(id, commands);

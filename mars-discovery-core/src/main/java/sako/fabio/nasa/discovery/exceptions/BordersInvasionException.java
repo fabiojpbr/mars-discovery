@@ -1,6 +1,6 @@
 package sako.fabio.nasa.discovery.exceptions;
 
-public class BordersInvasionException extends Exception {
+public class BordersInvasionException extends RuntimeException {
 
 	/**
 	 * 

@@ -1,19 +1,39 @@
 package sako.fabio.nasa.discovery.bean;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * Classe que representa as coordenadas do eixo X e Y
+ * @author fabio
+ *
+ */
 public class Coordination {
 	private int x;
 	private int y;
-	
-	public Coordination(int x, int y) {
+	/**
+	 * Construtor 
+	 * @param x
+	 * @param y
+	 */
+	@JsonCreator
+	public Coordination(@JsonProperty("x") int x, @JsonProperty("y") int y) {
 		super();
 		this.x = x;
 		this.y = y;
 	}
-
+	
+	/**
+	 * Método para obter o valor de x
+	 * @return
+	 */
 	public int getX() {
 		return x;
 	}
-
+	/**
+	 * Método para obter o valor de y
+	 * @return
+	 */
 	public int getY() {
 		return y;
 	}

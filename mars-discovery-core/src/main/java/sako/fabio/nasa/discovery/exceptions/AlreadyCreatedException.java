@@ -1,6 +1,6 @@
 package sako.fabio.nasa.discovery.exceptions;
 
-public class AlreadyCreatedException extends Exception {
+public class AlreadyCreatedException extends RuntimeException {
 
 	/**
 	 * 
