@@ -10,7 +10,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import sako.fabio.nasa.discovery.enums.CardinalPoint;
+import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.interfaces.AxisMovable;
 import sako.fabio.nasa.discovery.interfaces.Controllable;
 /**
@@ -28,7 +28,7 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	 */
 	private static final long serialVersionUID = -3507611299753181344L;
 	private Identify<String> id;
-	private CardinalPoint cardinalPoint;
+	private Direction direction;
 	private Coordination coordination;
 	private Plateau plateau;
 	
@@ -40,14 +40,14 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 			Coordination coordination,
 			@JsonProperty("cardinalPoint")
 			
-			CardinalPoint cardinalPoint) {
+			Direction cardinalPoint) {
 		super();
-		this.cardinalPoint = cardinalPoint;
+		this.direction = cardinalPoint;
 		this.coordination = coordination;
 		this.id = id;
 	}
 	
-	public Probe(Identify<String> id, Coordination coordination, CardinalPoint cardinalPoint, Plateau plateau) {
+	public Probe(Identify<String> id, Coordination coordination, Direction cardinalPoint, Plateau plateau) {
 		this(id,coordination,cardinalPoint);
 		this.plateau = plateau;
 	}
@@ -55,8 +55,8 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	
 	@JacksonXmlElementWrapper(useWrapping=false)
 	@JacksonXmlProperty(localName="cardinalPoint")
-	public CardinalPoint getCardinalPoint() {
-		return cardinalPoint;
+	public Direction getDirection() {
+		return direction;
 	}
 	
 	@JacksonXmlElementWrapper(useWrapping=false)
@@ -72,17 +72,17 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	}
 	
 	public void turnRight(){
-		this.cardinalPoint = cardinalPoint.getNextRight();
-		LOGGER.info(String.format("Probe: %s CMD: Turn Right, New Point: %s", this.id,cardinalPoint));
+		this.direction = direction.getNextRight();
+		LOGGER.info(String.format("Probe: %s CMD: Turn Right, New Point: %s", this.id,direction));
 	}
 	
 	public void turnLeft(){
-		this.cardinalPoint = cardinalPoint.getNextLeft();
-		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.id,cardinalPoint));
+		this.direction = direction.getNextLeft();
+		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.id,direction));
 	}
 	
 	public void move(){
-		this.cardinalPoint.move(this);
+		this.direction.move(this);
 		LOGGER.info(String.format("Probe: %s CMD: Move, New Position: (%s)", this.id,coordination));
 
 	}

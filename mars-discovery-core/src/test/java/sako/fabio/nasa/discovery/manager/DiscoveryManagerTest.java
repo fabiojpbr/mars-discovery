@@ -12,7 +12,7 @@ import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.bean.Identify;
 import sako.fabio.nasa.discovery.bean.Plateau;
 import sako.fabio.nasa.discovery.bean.Probe;
-import sako.fabio.nasa.discovery.enums.CardinalPoint;
+import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
@@ -33,7 +33,7 @@ public class DiscoveryManagerTest {
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
-		CardinalPoint cardinalPointInitial = CardinalPoint.N;
+		Direction cardinalPointInitial = Direction.N;
 		Coordination coordination = new Coordination(x, y);
 		Probe probe = discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		Assert.assertNotNull(probe);
@@ -46,7 +46,7 @@ public class DiscoveryManagerTest {
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
-		CardinalPoint cardinalPointInitial = CardinalPoint.N;
+		Direction cardinalPointInitial = Direction.N;
 		Coordination coordination = new Coordination(x, y);
 
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
@@ -59,7 +59,7 @@ public class DiscoveryManagerTest {
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
-		CardinalPoint cardinalPointInitial = CardinalPoint.N;
+		Direction cardinalPointInitial = Direction.N;
 		Coordination coordination = new Coordination(x, y);
 
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
@@ -68,7 +68,7 @@ public class DiscoveryManagerTest {
 		Probe probe = discoveryManager.command(id, commands);
 		int xExpected = 1;
 		int yExpected = 3;
-		CardinalPoint cardinalPointExpected = CardinalPoint.N;
+		Direction cardinalPointExpected = Direction.N;
 		Assert.assertEquals(xExpected, probe.getCoordination().getX());
 		Assert.assertEquals(yExpected, probe.getCoordination().getY());
 		Assert.assertEquals(cardinalPointInitial, cardinalPointExpected);
@@ -79,7 +79,7 @@ public class DiscoveryManagerTest {
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
-		CardinalPoint cardinalPointInitial = CardinalPoint.N;
+		Direction cardinalPointInitial = Direction.N;
 		Coordination coordination = new Coordination(x, y);
 
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
@@ -92,14 +92,14 @@ public class DiscoveryManagerTest {
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
-		CardinalPoint cardinalPointInitial = CardinalPoint.N;
+		Direction cardinalPointInitial = Direction.N;
 		Coordination coordination = new Coordination(x, y);
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		
 		int x2 = 1;
 		int y2 = 3;
 		Identify<String> id2 = new Identify<String>("probe_2");
-		CardinalPoint cardinalPointInitial2 = CardinalPoint.N;
+		Direction cardinalPointInitial2 = Direction.N;
 		Coordination coordination2 = new Coordination(x2, y2);
 		discoveryManager.addProbe(id2, coordination2, cardinalPointInitial2);
 		

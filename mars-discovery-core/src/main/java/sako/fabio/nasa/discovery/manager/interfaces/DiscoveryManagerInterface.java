@@ -7,7 +7,7 @@ import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.bean.Identify;
 import sako.fabio.nasa.discovery.bean.Plateau;
 import sako.fabio.nasa.discovery.bean.Probe;
-import sako.fabio.nasa.discovery.enums.CardinalPoint;
+import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
@@ -30,7 +30,7 @@ public interface DiscoveryManagerInterface {
 	 * @throws AlreadyBoundException
 	 * @throws AlreadyCreatedException
 	 */
-	public Probe addProbe(Identify<String> name, Coordination coordination, CardinalPoint cardinalPointInitial);
+	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial);
 	
 	public Probe command(Identify<String> name, Collection<String> commands);
 

@@ -9,29 +9,29 @@ public class TestCardinalPoint {
 	
 	@Test
 	public void testNextRight(){
-		CardinalPoint expected = CardinalPoint.E;
-		CardinalPoint nextCardinal = CardinalPoint.N.getNextRight();
+		Direction expected = Direction.E;
+		Direction nextCardinal = Direction.N.getNextRight();
 		Assert.assertEquals(expected, nextCardinal);
 	}
 	
 	@Test
 	public void testNextRightExecuteEndArray(){
-		CardinalPoint expected = CardinalPoint.N;
-		CardinalPoint nextCardinal = CardinalPoint.W.getNextRight();
+		Direction expected = Direction.N;
+		Direction nextCardinal = Direction.W.getNextRight();
 		Assert.assertEquals(expected, nextCardinal);
 	}
 	
 	@Test
 	public void testNextLeft(){
-		CardinalPoint expected = CardinalPoint.E;
-		CardinalPoint nextCardinal = CardinalPoint.S.getNextLeft();
+		Direction expected = Direction.E;
+		Direction nextCardinal = Direction.S.getNextLeft();
 		Assert.assertEquals(expected, nextCardinal);
 	}
 	
 	@Test
 	public void testNextLeftEndArray(){
-		CardinalPoint expected = CardinalPoint.W;
-		CardinalPoint nextCardinal = CardinalPoint.N.getNextLeft();
+		Direction expected = Direction.W;
+		Direction nextCardinal = Direction.N.getNextLeft();
 		Assert.assertEquals(expected, nextCardinal);
 	}
 }

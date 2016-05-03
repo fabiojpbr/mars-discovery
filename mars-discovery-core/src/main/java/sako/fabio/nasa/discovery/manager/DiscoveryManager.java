@@ -8,7 +8,7 @@ import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.bean.Identify;
 import sako.fabio.nasa.discovery.bean.Plateau;
 import sako.fabio.nasa.discovery.bean.Probe;
-import sako.fabio.nasa.discovery.enums.CardinalPoint;
+import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
@@ -28,7 +28,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		super();
 	}
 
-	public Probe addProbe(Identify<String> name, Coordination coordination, CardinalPoint cardinalPointInitial) throws BordersInvasionException, BusyPlaceException, AlreadyCreatedException {
+	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial) throws BordersInvasionException, BusyPlaceException, AlreadyCreatedException {
 		if (plateau.getProbeById(name) != null){
 			throw new AlreadyCreatedException();
 		}

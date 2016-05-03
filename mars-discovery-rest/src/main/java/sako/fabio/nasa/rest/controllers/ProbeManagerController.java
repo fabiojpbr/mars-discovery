@@ -1,4 +1,4 @@
-package sako.fabio.nasa.controllers;
+package sako.fabio.nasa.rest.controllers;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 
@@ -51,7 +51,7 @@ public class ProbeManagerController extends ExceptionHandlingController{
             })
 	@ResponseBody
 	public Resource<Probe> createProbe(@RequestBody Probe probe){
-		Probe probeAdded = discoveryManager.addProbe(probe.getId(), probe.getCoordination(), probe.getCardinalPoint());
+		Probe probeAdded = discoveryManager.addProbe(probe.getId(), probe.getCoordination(), probe.getDirection());
 		Resource<Probe> resource = new Resource<Probe>(probeAdded);
 		resource.add(linkTo(methodOn(ProbeManagerController.class).getProbe(probe.getId().getId())).withSelfRel());
 		return resource;

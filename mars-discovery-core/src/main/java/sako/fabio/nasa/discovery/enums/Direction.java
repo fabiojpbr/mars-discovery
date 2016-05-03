@@ -13,7 +13,7 @@ import sako.fabio.nasa.discovery.interfaces.AxisMovable;
  * @author fabio
  *
  */
-public enum CardinalPoint {
+public enum Direction {
 	
 	N {
 		@Override
@@ -41,29 +41,29 @@ public enum CardinalPoint {
 		}
 	};
 	/**
-	 * Método que obtem o próximo ponto Cardial à direita
-	 * @return Retorna o Ponto Cardial à direita
+	 * Método que obtem o próximo ponto da Direção à direita
+	 * @return Retorna o Ponto da Direção à direita
 	 */
-	public CardinalPoint getNextRight(){
+	public Direction getNextRight(){
 		
 		int actual = this.ordinal();
 		actual +=1;
-		if(CardinalPoint.values().length == actual){
+		if(Direction.values().length == actual){
 			actual = 0;
 		}
-		return CardinalPoint.values()[actual];
+		return Direction.values()[actual];
 	}
 	/**
-	 * Método que obtem o próximo ponto Cardial à esquerda
-	 * @return Retorna o Ponto Cardial à esquerda
+	 * Método que obtem o próximo ponto da Direção à esquerda
+	 * @return Retorna o ponto da Direção à esquerda
 	 */
-	public CardinalPoint getNextLeft(){
+	public Direction getNextLeft(){
 		int actual = this.ordinal();
 		actual -=1;
 		if(actual < 0){
-			actual = CardinalPoint.values().length - 1;
+			actual = Direction.values().length - 1;
 		}
-		return CardinalPoint.values()[actual];
+		return Direction.values()[actual];
 	}
 	
 	public abstract void move(AxisMovable movableXY)  throws BordersInvasionException, BusyPlaceException;

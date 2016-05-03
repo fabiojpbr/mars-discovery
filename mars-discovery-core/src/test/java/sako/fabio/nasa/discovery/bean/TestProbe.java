@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import sako.fabio.nasa.discovery.bean.Plateau;
 import sako.fabio.nasa.discovery.bean.Probe;
-import sako.fabio.nasa.discovery.enums.CardinalPoint;
+import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 
@@ -26,7 +26,7 @@ public class TestProbe {
 	@Test
 	public void testMoveToNorth() throws BordersInvasionException, BusyPlaceException{
 		
-		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y) , CardinalPoint.N, plateau );
+		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y) , Direction.N, plateau );
 		probe.move();
 		int expected = 2;
 		Assert.assertEquals(expected, probe.getCoordination().getY());
@@ -34,14 +34,14 @@ public class TestProbe {
 	
 	@Test
 	public void testMoveToEast() throws BordersInvasionException, BusyPlaceException{
-		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y), CardinalPoint.E, plateau );
+		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y), Direction.E, plateau );
 		probe.move();
 		int expected = 2;
 		Assert.assertEquals(expected, probe.getCoordination().getX());
 	}
 	@Test
 	public void testMoveToSouth() throws BordersInvasionException, BusyPlaceException{
-		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y), CardinalPoint.S, plateau );
+		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y), Direction.S, plateau );
 		probe.move();
 		int expected = 0;
 		Assert.assertEquals(expected, probe.getCoordination().getY());
@@ -50,7 +50,7 @@ public class TestProbe {
 	@Test
 	public void testMoveToWeast() throws BordersInvasionException, BusyPlaceException{
 
-		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y), CardinalPoint.W, plateau );
+		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y), Direction.W, plateau );
 		probe.move();
 		int expected = 0;
 		Assert.assertEquals(expected, probe.getCoordination().getX());
@@ -61,7 +61,7 @@ public class TestProbe {
 
 		int x = 1;
 		int y = 2;
-		Probe probe = new Probe(null, new Coordination(x, y), CardinalPoint.N, plateau );
+		Probe probe = new Probe(null, new Coordination(x, y), Direction.N, plateau );
 		//LMLMLMLMM
 		probe.turnLeft();
 		probe.move();
@@ -75,11 +75,11 @@ public class TestProbe {
 		//1 3 N
 		int xExpected = 1;
 		int yExpected = 3;
-		CardinalPoint cardinalPointExpected = CardinalPoint.N;
+		Direction directionExpected = Direction.N;
 		
 		Assert.assertEquals(xExpected, probe.getCoordination().getX());
 		Assert.assertEquals(yExpected, probe.getCoordination().getY());
-		Assert.assertEquals(cardinalPointExpected, probe.getCardinalPoint());
+		Assert.assertEquals(directionExpected, probe.getDirection());
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class TestProbe {
 		//3 3 E
 		int x = 3;
 		int y = 3;
-		Probe probe = new Probe(null, new Coordination(x, y), CardinalPoint.E, plateau );
+		Probe probe = new Probe(null, new Coordination(x, y), Direction.E, plateau );
 		//MMRMMRMRRM
 		probe.move();
 		probe.move();
@@ -102,18 +102,18 @@ public class TestProbe {
 		//5 1 E
 		int xExpected = 5;
 		int yExpected = 1;
-		CardinalPoint cardinalPointExpected = CardinalPoint.E;
+		Direction directionExpected = Direction.E;
 		
 		Assert.assertEquals(xExpected, probe.getCoordination().getX());
 		Assert.assertEquals(yExpected, probe.getCoordination().getY());
-		Assert.assertEquals(cardinalPointExpected, probe.getCardinalPoint());
+		Assert.assertEquals(directionExpected, probe.getDirection());
 	}
 	@Test(expected=BordersInvasionException.class)
 	public void testProveMoveBeyondBorderSouthShouldThrowsException() throws BordersInvasionException, BusyPlaceException{
 		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
 		int x = 0;
 		int y = 0;
-		Probe probe = new Probe(null, new Coordination(x, y), CardinalPoint.S, plateau );
+		Probe probe = new Probe(null, new Coordination(x, y), Direction.S, plateau );
 		probe.move();
 	}
 	
@@ -122,7 +122,7 @@ public class TestProbe {
 		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
 		int x = 0;
 		int y = 5;
-		Probe probe = new Probe(null, new Coordination(x, y), CardinalPoint.N, plateau );
+		Probe probe = new Probe(null, new Coordination(x, y), Direction.N, plateau );
 		probe.move();
 	}
 	
@@ -131,7 +131,7 @@ public class TestProbe {
 		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
 		int x = 0;
 		int y = 0;
-		Probe probe = new Probe(null, new Coordination(x, y), CardinalPoint.W, plateau );
+		Probe probe = new Probe(null, new Coordination(x, y), Direction.W, plateau );
 		probe.move();
 	}
 	
@@ -140,7 +140,7 @@ public class TestProbe {
 		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
 		int x = 5;
 		int y = 0;
-		Probe probe = new Probe(null, new Coordination(x, y), CardinalPoint.E, plateau );
+		Probe probe = new Probe(null, new Coordination(x, y), Direction.E, plateau );
 		probe.move();
 	}
 }
