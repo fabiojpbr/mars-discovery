@@ -45,7 +45,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		}
 		for(String command: commands){
 			try{
-				Command.valueOf(command).execute(probe);
+				Command.valueOf(command.toUpperCase()).execute(probe);
 			}catch(IllegalArgumentException e){
 				throw new InvalidCommandException();
 			}
@@ -61,6 +61,22 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		this.plateau = plateau;
 	}
 	
+	@Override
+	public Collection<Probe> getProbes() {
+		Collection<Probe> probes = this.plateau.getProbes();
+		if(probes == null || probes.isEmpty()){
+			throw new ObjectNasaNotFound();
+		}
+		return probes; 
+	}
+	@Override
+	public Probe findProbeByName(Identify<String> identify) {
+		Probe probe = this.plateau.getProbeById(identify);
+		if(probe == null){
+			throw new ObjectNasaNotFound();
+		}
+		return probe;
+	}
 	
 
 }

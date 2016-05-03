@@ -1,8 +1,12 @@
 package sako.fabio.nasa.controllers;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.List;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,11 +31,11 @@ public class ProbeManagerController extends ExceptionHandlingController{
 	@Autowired
 	private DiscoveryManagerInterface discoveryManager;
 	
-	@ApiOperation(value = "Criar", nickname = "Criar")
+	@ApiOperation(value = "Criar Terreno", nickname = "Criar Terreno")
     @RequestMapping(method = RequestMethod.POST, path="/plateau", produces = {"application/json","application/xml"}, consumes= {"application/json","application/xml"})
     @ApiResponses(value = { 
             @ApiResponse(code = 201, message = "Created", response = Plateau.class),
-            @ApiResponse(code = 409, message = "Conflit, Já existe um planalto configurado")
+            @ApiResponse(code = 409, message = "Conflit, Já existe um Terreno configurado")
             })
 	@ResponseBody
 	public ResponseEntity<Plateau> createPlateau(@RequestBody Plateau plateau){
@@ -46,9 +50,11 @@ public class ProbeManagerController extends ExceptionHandlingController{
             @ApiResponse(code = 409, message = "Conflit")
             })
 	@ResponseBody
-	public ResponseEntity<Probe> createProbe(@RequestBody Probe probe){
+	public Resource<Probe> createProbe(@RequestBody Probe probe){
 		Probe probeAdded = discoveryManager.addProbe(probe.getId(), probe.getCoordination(), probe.getCardinalPoint());
-		return new ResponseEntity<Probe>(probeAdded, HttpStatus.CREATED);
+		Resource<Probe> resource = new Resource<Probe>(probeAdded);
+		resource.add(linkTo(methodOn(ProbeManagerController.class).getProbe(probe.getId().getId())).withSelfRel());
+		return resource;
 	}
 	
 	@ApiOperation(value = "Command", nickname = "Command")
@@ -58,9 +64,31 @@ public class ProbeManagerController extends ExceptionHandlingController{
             @ApiResponse(code = 409, message = "Conflit")
             })
 	@ResponseBody
-	public ResponseEntity<Probe> commandProbe(@RequestParam("name") String name, @RequestBody CommandList commands){
+	public ResponseEntity<Probe> commandProbe(@RequestParam("name") String name, @RequestBody Collection<String> commands){
 		Probe probe = discoveryManager.command(new Identify<String>(name), commands);
-		return new ResponseEntity<Probe>(probe, HttpStatus.CREATED);
+		return new ResponseEntity<Probe>(probe, HttpStatus.OK);
 	}
-
+	
+	@ApiOperation(value = "getProbes", nickname = "getProbes")
+    @RequestMapping(method = RequestMethod.GET, path="/plateau/probe/", produces = {"application/json","application/xml"})
+    @ApiResponses(value = { 
+            @ApiResponse(code = 201, message = "Created", response = Plateau.class),
+            @ApiResponse(code = 409, message = "Conflit")
+            })
+	@ResponseBody
+	public ResponseEntity<Collection<Probe>> getProbes(){
+		Collection<Probe> probes = discoveryManager.getProbes();
+		return new ResponseEntity<Collection<Probe>>(probes, HttpStatus.OK);
+	}
+	@ApiOperation(value = "getProbe", nickname = "getProbe")
+    @RequestMapping(method = RequestMethod.GET, path="/plateau/probe/{id}", produces = {"application/json","application/xml"})
+    @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "Success", response = Probe.class),
+            @ApiResponse(code = 409, message = "Conflit")
+            })
+	@ResponseBody
+	public ResponseEntity<Probe> getProbe(@RequestParam("id") String name){
+		Probe probe = discoveryManager.findProbeByName(new Identify<String>(name));
+		return new ResponseEntity<Probe>(probe, HttpStatus.OK);
+	}
 }

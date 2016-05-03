@@ -1,5 +1,6 @@
 package sako.fabio.nasa.discovery.bean;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -90,6 +91,10 @@ public class Plateau{
 	public Probe getProbeById(Identify<String> id){
 		Coordination coordination = mapCoordinationKey.get(id);
 		return mapElementCoordination.get(coordination);
+	}
+	
+	public Collection<Probe> getProbes(){
+		return mapElementCoordination.values();
 	}
 	
 }

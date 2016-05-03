@@ -35,4 +35,8 @@ public interface DiscoveryManagerInterface {
 	public Probe command(Identify<String> name, Collection<String> commands);
 
 	public void setPlateau(Plateau plateau);
+	
+	public Collection<Probe> getProbes();
+	
+	public Probe findProbeByName(Identify<String> identify);
 }
