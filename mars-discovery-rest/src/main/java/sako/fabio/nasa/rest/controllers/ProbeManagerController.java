@@ -46,6 +46,9 @@ public class ProbeManagerController extends ExceptionHandlingController {
 			@ApiResponse(code = 409, message = "Conflit, Já existe um Terreno configurado") })
 	@ResponseBody
 	public ResponseEntity<Void> createPlateau(@RequestBody Plateau plateau) {
+		if(plateau == null || plateau.getHeight() < 1 || plateau.getWidth() < 1){
+			throw new IllegalArgumentException("Check the values, height and width need to be greater than 0");
+		}
 		discoveryManager.setPlateau(plateau);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(linkTo(methodOn(getClass()).getPlateau()).toUri());
@@ -109,5 +112,15 @@ public class ProbeManagerController extends ExceptionHandlingController {
 	public ProbeResource getProbe(@PathVariable("name") String name) {
 		Probe probe = discoveryManager.findProbeByName(new Identify<String>(name));
 		return probeResourceAssembler.toResource(probe);
+	}
+	
+	@ApiOperation(value = "Delete Probe", nickname = "Delete Probe")
+	@RequestMapping(method = RequestMethod.DELETE, path = "/plateau/probe/{name}/")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Probe.class),
+			@ApiResponse(code = 409, message = "Conflit") })
+	@ResponseBody
+	public ResponseEntity<Void>  deleteProbe(@PathVariable("name") String name) {
+		discoveryManager.deleteProbeByName(new Identify<String>(name));
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 }

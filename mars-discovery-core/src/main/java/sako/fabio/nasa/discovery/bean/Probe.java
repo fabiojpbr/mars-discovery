@@ -38,7 +38,7 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 			Identify<String> name,
 			@JsonProperty("coordination")
 			Coordination coordination,
-			@JsonProperty("cardinalPoint")
+			@JsonProperty("direction")
 			
 			Direction cardinalPoint) {
 		super();
@@ -54,7 +54,7 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	
 	
 	@JacksonXmlElementWrapper(useWrapping=false)
-	@JacksonXmlProperty(localName="cardinalPoint")
+	@JacksonXmlProperty(localName="direction")
 	public Direction getDirection() {
 		return direction;
 	}

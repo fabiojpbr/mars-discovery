@@ -63,4 +63,10 @@ public interface DiscoveryManagerInterface {
 	 * @return
 	 */
 	public Plateau getPlateau();
+
+	/**
+	 * 
+	 * @param identify
+	 */
+	public void deleteProbeByName(Identify<String> identify);
 }

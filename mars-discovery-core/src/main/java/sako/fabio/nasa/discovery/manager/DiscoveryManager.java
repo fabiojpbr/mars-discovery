@@ -12,7 +12,7 @@ import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
-import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFound;
+import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
 @Service
 public class DiscoveryManager implements DiscoveryManagerInterface {
@@ -27,7 +27,10 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	}
 
 	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial) {
-		if (plateau.getProbeById(name) != null){
+		if(plateau == null){
+			throw new ObjectNasaNotFoundException("Plateau not exists");
+		}
+		if (plateau.getProbeByName(name) != null){
 			throw new AlreadyCreatedException("Probe already exists!");
 		}
 		Probe probe = new Probe(name, coordination, cardinalPointInitial, this.plateau);
@@ -37,9 +40,9 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	}
 
 	public Probe command(Identify<String> name, Collection<String> commands) {
-		Probe probe = plateau.getProbeById(name);
+		Probe probe = plateau.getProbeByName(name);
 		if(probe == null){
-			throw new ObjectNasaNotFound(String.format("Probe: %s not found", name));
+			throw new ObjectNasaNotFoundException(String.format("Probe: %s not found", name));
 		}
 		for(String command: commands){
 			try{
@@ -63,15 +66,15 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	public Collection<Probe> getProbes() {
 		Collection<Probe> probes = this.plateau.getProbes();
 		if(probes == null || probes.isEmpty()){
-			throw new ObjectNasaNotFound("There is not any probe");
+			throw new ObjectNasaNotFoundException("There is not any probe");
 		}
 		return probes; 
 	}
 	@Override
 	public Probe findProbeByName(Identify<String> identify) {
-		Probe probe = this.plateau.getProbeById(identify);
+		Probe probe = this.plateau.getProbeByName(identify);
 		if(probe == null){
-			throw new ObjectNasaNotFound(String.format("Probe: %s not found", identify));
+			throw new ObjectNasaNotFoundException(String.format("Probe: %s not found", identify));
 		}
 		return probe;
 	}
@@ -79,9 +82,14 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	@Override
 	public Plateau getPlateau() {
 		if(plateau == null){
-			throw new ObjectNasaNotFound("Plateau not found");
+			throw new ObjectNasaNotFoundException("Plateau not found");
 		}
 		return plateau;
+	}
+	
+	@Override
+	public void deleteProbeByName(Identify<String> identify) {
+		plateau.deleteProbeByName(identify);
 	}
 
 }

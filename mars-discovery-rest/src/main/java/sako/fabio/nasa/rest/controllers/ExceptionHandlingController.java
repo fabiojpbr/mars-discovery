@@ -8,7 +8,7 @@ import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
-import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFound;
+import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
 
 public class ExceptionHandlingController {
 	@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Already Created") // 409
@@ -17,8 +17,8 @@ public class ExceptionHandlingController {
 
 	}
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Not Found")
-	@ExceptionHandler(ObjectNasaNotFound.class)
-	public void notFound(){
+	@ExceptionHandler(ObjectNasaNotFoundException.class)
+	public void notFound(ObjectNasaNotFoundException exception){
 		
 	}
 	
@@ -30,6 +30,12 @@ public class ExceptionHandlingController {
 	@ResponseStatus(value = HttpStatus.CONFLICT, reason = "")
 	@ExceptionHandler({BordersInvasionException.class, BusyPlaceException.class})
 	public void notAllowed(){
+		
+	}
+	
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(IllegalArgumentException.class)
+	public void illegalArgument(){
 		
 	}
 }

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
+import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
 /**
  * Classe que representa o Planalto
  * @author fabio
@@ -88,12 +89,21 @@ public class Plateau{
 	
 	/**
 	 * Retorna o objeto que está no planato de acordo com a sua identificação
-	 * @param id Identificação do objeto que deseja recuperar
+	 * @param name Identificação do objeto que deseja recuperar
 	 * @return
 	 */
-	public Probe getProbeById(Identify<String> id){
-		Coordination coordination = mapCoordinationKey.get(id);
-		return mapElementCoordination.get(coordination);
+	public Probe getProbeByName(Identify<String> name){
+		Coordination coordination = mapCoordinationKey.get(name);
+		Probe probe = mapElementCoordination.get(coordination);
+		return probe;
+	}
+	
+	public void deleteProbeByName(Identify<String> name){
+		Coordination coordination = mapCoordinationKey.remove(name);
+		Probe probe = mapElementCoordination.remove(coordination);
+		if(coordination == null || probe == null){
+			throw new ObjectNasaNotFoundException(String.format("Probe: %s Not Found", name));
+		}
 	}
 	
 	@JsonIgnore

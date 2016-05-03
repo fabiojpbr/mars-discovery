@@ -17,7 +17,7 @@ import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
-import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFound;
+import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
 
 public class DiscoveryManagerTest {
@@ -55,7 +55,7 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test
-	public void testCommand() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
+	public void testCommand() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFoundException{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
@@ -75,7 +75,7 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test(expected=InvalidCommandException.class)
-	public void testCommandInvalid() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
+	public void testCommandInvalid() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFoundException{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
@@ -88,7 +88,7 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test(expected=BusyPlaceException.class)
-	public void testCommandConflictsPlaces() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
+	public void testCommandConflictsPlaces() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFoundException{
 		int x = 1;
 		int y = 2;
 		Identify<String> id = new Identify<String>("probe_1");
@@ -107,8 +107,8 @@ public class DiscoveryManagerTest {
 		discoveryManager.command(id, commands);
 	}
 	
-	@Test(expected=ObjectNasaNotFound.class)
-	public void testCommandProbeNotFound() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFound{
+	@Test(expected=ObjectNasaNotFoundException.class)
+	public void testCommandProbeNotFound() throws BordersInvasionException, BusyPlaceException, InvalidCommandException, AlreadyBoundException, AlreadyCreatedException, ObjectNasaNotFoundException{
 		Identify<String> id = new Identify<String>("probe_1");		
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
 		discoveryManager.command(id, commands);
