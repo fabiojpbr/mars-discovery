@@ -3,7 +3,10 @@ package sako.fabio.nasa.discovery.bean;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -79,7 +82,7 @@ public class Plateau{
 			mapCoordinationKey.remove(value.getName());
 			mapCoordinationKey.put(value.getName(),coordination);
 		}else{
-			throw new BordersInvasionException();
+			throw new BordersInvasionException(String.format("Probe: %s can not move", value.getName()));
 		}
 	}
 	
@@ -93,6 +96,8 @@ public class Plateau{
 		return mapElementCoordination.get(coordination);
 	}
 	
+	@JsonIgnore
+	@XmlTransient
 	public Collection<Probe> getProbes(){
 		return mapElementCoordination.values();
 	}

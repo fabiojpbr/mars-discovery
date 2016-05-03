@@ -8,11 +8,9 @@ import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.bean.Identify;
 import sako.fabio.nasa.discovery.bean.Plateau;
 import sako.fabio.nasa.discovery.bean.Probe;
-import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.enums.Command;
+import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
-import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
-import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
 import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFound;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
@@ -28,9 +26,9 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		super();
 	}
 
-	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial) throws BordersInvasionException, BusyPlaceException, AlreadyCreatedException {
+	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial) {
 		if (plateau.getProbeById(name) != null){
-			throw new AlreadyCreatedException();
+			throw new AlreadyCreatedException("Probe already exists!");
 		}
 		Probe probe = new Probe(name, coordination, cardinalPointInitial, this.plateau);
 		
@@ -38,10 +36,10 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		return probe;
 	}
 
-	public Probe command(Identify<String> name, Collection<String> commands) throws BordersInvasionException, BusyPlaceException, InvalidCommandException, ObjectNasaNotFound {
+	public Probe command(Identify<String> name, Collection<String> commands) {
 		Probe probe = plateau.getProbeById(name);
 		if(probe == null){
-			throw new ObjectNasaNotFound();
+			throw new ObjectNasaNotFound(String.format("Probe: %s not found", name));
 		}
 		for(String command: commands){
 			try{
@@ -56,7 +54,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 
 	public void setPlateau(Plateau plateau){
 		if(this.plateau != null){
-			throw new AlreadyCreatedException();
+			throw new AlreadyCreatedException("Plateau already exits");
 		}
 		this.plateau = plateau;
 	}
@@ -65,7 +63,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	public Collection<Probe> getProbes() {
 		Collection<Probe> probes = this.plateau.getProbes();
 		if(probes == null || probes.isEmpty()){
-			throw new ObjectNasaNotFound();
+			throw new ObjectNasaNotFound("There is not any probe");
 		}
 		return probes; 
 	}
@@ -73,10 +71,17 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	public Probe findProbeByName(Identify<String> identify) {
 		Probe probe = this.plateau.getProbeById(identify);
 		if(probe == null){
-			throw new ObjectNasaNotFound();
+			throw new ObjectNasaNotFound(String.format("Probe: %s not found", identify));
 		}
 		return probe;
 	}
 	
+	@Override
+	public Plateau getPlateau() {
+		if(plateau == null){
+			throw new ObjectNasaNotFound("Plateau not found");
+		}
+		return plateau;
+	}
 
 }

@@ -58,4 +58,9 @@ public interface DiscoveryManagerInterface {
 	 * @return
 	 */
 	public Probe findProbeByName(Identify<String> name);
+	/**
+	 * 
+	 * @return
+	 */
+	public Plateau getPlateau();
 }
