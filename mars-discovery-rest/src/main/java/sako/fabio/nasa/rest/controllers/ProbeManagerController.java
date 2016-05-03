@@ -51,9 +51,9 @@ public class ProbeManagerController extends ExceptionHandlingController{
             })
 	@ResponseBody
 	public Resource<Probe> createProbe(@RequestBody Probe probe){
-		Probe probeAdded = discoveryManager.addProbe(probe.getId(), probe.getCoordination(), probe.getDirection());
+		Probe probeAdded = discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
 		Resource<Probe> resource = new Resource<Probe>(probeAdded);
-		resource.add(linkTo(methodOn(ProbeManagerController.class).getProbe(probe.getId().getId())).withSelfRel());
+		resource.add(linkTo(methodOn(ProbeManagerController.class).getProbe(probe.getName().getId())).withSelfRel());
 		return resource;
 	}
 	

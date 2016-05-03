@@ -76,8 +76,8 @@ public class Plateau{
 			mapElementCoordination.remove(value.getCoordination());
 			mapElementCoordination.put(coordination, value);
 			
-			mapCoordinationKey.remove(value.getId());
-			mapCoordinationKey.put(value.getId(),coordination);
+			mapCoordinationKey.remove(value.getName());
+			mapCoordinationKey.put(value.getName(),coordination);
 		}else{
 			throw new BordersInvasionException();
 		}

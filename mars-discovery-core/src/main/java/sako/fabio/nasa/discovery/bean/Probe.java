@@ -27,15 +27,15 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	 * 
 	 */
 	private static final long serialVersionUID = -3507611299753181344L;
-	private Identify<String> id;
+	private Identify<String> name;
 	private Direction direction;
 	private Coordination coordination;
 	private Plateau plateau;
 	
 	@JsonCreator
 	public Probe(
-			@JsonProperty("id")
-			Identify<String> id,
+			@JsonProperty("name")
+			Identify<String> name,
 			@JsonProperty("coordination")
 			Coordination coordination,
 			@JsonProperty("cardinalPoint")
@@ -44,11 +44,11 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 		super();
 		this.direction = cardinalPoint;
 		this.coordination = coordination;
-		this.id = id;
+		this.name = name;
 	}
 	
-	public Probe(Identify<String> id, Coordination coordination, Direction cardinalPoint, Plateau plateau) {
-		this(id,coordination,cardinalPoint);
+	public Probe(Identify<String> name, Coordination coordination, Direction cardinalPoint, Plateau plateau) {
+		this(name,coordination,cardinalPoint);
 		this.plateau = plateau;
 	}
 	
@@ -66,24 +66,24 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	}
 	
 	@JacksonXmlElementWrapper(useWrapping=false)
-	@JacksonXmlProperty(localName="id")
-	public Identify<String> getId() {
-		return id;
+	@JacksonXmlProperty(localName="name")
+	public Identify<String> getName() {
+		return name;
 	}
 	
 	public void turnRight(){
 		this.direction = direction.getNextRight();
-		LOGGER.info(String.format("Probe: %s CMD: Turn Right, New Point: %s", this.id,direction));
+		LOGGER.info(String.format("Probe: %s CMD: Turn Right, New Point: %s", this.name,direction));
 	}
 	
 	public void turnLeft(){
 		this.direction = direction.getNextLeft();
-		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.id,direction));
+		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.name,direction));
 	}
 	
 	public void move(){
 		this.direction.move(this);
-		LOGGER.info(String.format("Probe: %s CMD: Move, New Position: (%s)", this.id,coordination));
+		LOGGER.info(String.format("Probe: %s CMD: Move, New Position: (%s)", this.name,coordination));
 
 	}
 
@@ -117,7 +117,7 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -130,10 +130,10 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 		if (getClass() != obj.getClass())
 			return false;
 		Probe other = (Probe) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
