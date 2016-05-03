@@ -19,7 +19,7 @@ import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
  */
 public interface DiscoveryManagerInterface {
 	/**
-	 * Adiciona um Sonar no Planalto
+	 * Adiciona uma Sonda no Planalto
 	 * @param name
 	 * @param posXInitial
 	 * @param posYInitial
@@ -32,11 +32,30 @@ public interface DiscoveryManagerInterface {
 	 */
 	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial);
 	
+	/**
+	 * Executa comandos da Sonda
+	 * @param name Nome da Sonda
+	 * @param commands Lista de comandos a ser executado
+	 * @return
+	 */
 	public Probe command(Identify<String> name, Collection<String> commands);
 
+	/**
+	 * Configura o Planalto
+	 * @param plateau
+	 */
+
 	public void setPlateau(Plateau plateau);
-	
+	/**
+	 * Retorna lista de Sondas do Planalto
+	 * @return
+	 */
 	public Collection<Probe> getProbes();
 	
-	public Probe findProbeByName(Identify<String> identify);
+	/**
+	 * Busca a sonda pelo seu nome
+	 * @param name
+	 * @return
+	 */
+	public Probe findProbeByName(Identify<String> name);
 }
