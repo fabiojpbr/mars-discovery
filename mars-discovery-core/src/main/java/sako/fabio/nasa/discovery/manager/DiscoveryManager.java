@@ -26,14 +26,14 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		super();
 	}
 
-	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial) {
+	public Probe addProbe(Identify<String> name, Coordination coordination, Direction direction) {
 		if(plateau == null){
 			throw new ObjectNasaNotFoundException("Plateau not exists");
 		}
 		if (plateau.getProbeByName(name) != null){
 			throw new AlreadyCreatedException("Probe already exists!");
 		}
-		Probe probe = new Probe(name, coordination, cardinalPointInitial, this.plateau);
+		Probe probe = new Probe(name, coordination, direction, this.plateau);
 		
 		plateau.alterCoordination(coordination, probe);
 		return probe;
@@ -90,6 +90,11 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	@Override
 	public void deleteProbeByName(Identify<String> identify) {
 		plateau.deleteProbeByName(identify);
+	}
+	
+	@Override
+	public void deletePlateau() {
+		this.plateau = null;
 	}
 
 }

@@ -63,6 +63,11 @@ public interface DiscoveryManagerInterface {
 	 * @return
 	 */
 	public Plateau getPlateau();
+	
+	/**
+	 * 
+	 */
+	public void deletePlateau();
 
 	/**
 	 * 
