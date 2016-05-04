@@ -4,16 +4,16 @@ import java.util.Collection;
 
 import org.springframework.stereotype.Service;
 
-import sako.fabio.nasa.discovery.bean.Coordination;
-import sako.fabio.nasa.discovery.bean.Identify;
-import sako.fabio.nasa.discovery.bean.Plateau;
-import sako.fabio.nasa.discovery.bean.Probe;
 import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
 import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
+import sako.fabio.nasa.discovery.model.Coordination;
+import sako.fabio.nasa.discovery.model.Identify;
+import sako.fabio.nasa.discovery.model.Plateau;
+import sako.fabio.nasa.discovery.model.Probe;
 @Service
 public class DiscoveryManager implements DiscoveryManagerInterface {
 	private Plateau plateau;
@@ -56,6 +56,9 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	}
 
 	public void setPlateau(Plateau plateau){
+		if(plateau == null || plateau.getHeight() < 1 || plateau.getWidth() < 1){
+			throw new IllegalArgumentException("Check the values, height and width need to be greater than 0");
+		}
 		if(this.plateau != null){
 			throw new AlreadyCreatedException("Plateau already exits");
 		}
@@ -65,9 +68,6 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	@Override
 	public Collection<Probe> getProbes() {
 		Collection<Probe> probes = this.plateau.getProbes();
-		if(probes == null || probes.isEmpty()){
-			throw new ObjectNasaNotFoundException("There is not any probe");
-		}
 		return probes; 
 	}
 	@Override

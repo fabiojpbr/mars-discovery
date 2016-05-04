@@ -1,4 +1,4 @@
-package sako.fabio.nasa.discovery.bean;
+package sako.fabio.nasa.discovery.model;
 
 import java.io.Serializable;
 

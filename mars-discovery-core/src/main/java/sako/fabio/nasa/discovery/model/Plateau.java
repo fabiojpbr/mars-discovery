@@ -1,4 +1,4 @@
-package sako.fabio.nasa.discovery.bean;
+package sako.fabio.nasa.discovery.model;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,17 +43,10 @@ public class Plateau{
 			@JacksonXmlProperty(localName="width")
 			int width) {
 		super();
-		//TODO Validar o tamanho
 		this.height = height;
 		this.width = width;
 		this.mapElementCoordination = new HashMap<Coordination, Probe>();
 		this.mapCoordinationKey = new HashMap<Identify<String>, Coordination>();
-	}
-	
-	
-	
-	public Plateau() {
-		super();
 	}
 	
 	@JacksonXmlProperty(localName="height")
@@ -101,7 +94,7 @@ public class Plateau{
 	public void deleteProbeByName(Identify<String> name){
 		Coordination coordination = mapCoordinationKey.remove(name);
 		Probe probe = mapElementCoordination.remove(coordination);
-		if(coordination == null || probe == null){
+		if(probe == null){
 			throw new ObjectNasaNotFoundException(String.format("Probe: %s Not Found", name));
 		}
 	}

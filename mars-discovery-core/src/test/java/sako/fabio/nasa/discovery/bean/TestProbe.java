@@ -4,11 +4,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import sako.fabio.nasa.discovery.bean.Plateau;
-import sako.fabio.nasa.discovery.bean.Probe;
 import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
+import sako.fabio.nasa.discovery.model.Coordination;
+import sako.fabio.nasa.discovery.model.Plateau;
+import sako.fabio.nasa.discovery.model.Probe;
 
 public class TestProbe {
 	private static final int INIT_X = 1;

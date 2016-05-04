@@ -3,14 +3,14 @@ package sako.fabio.nasa.discovery.manager.interfaces;
 import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 
-import sako.fabio.nasa.discovery.bean.Coordination;
-import sako.fabio.nasa.discovery.bean.Identify;
-import sako.fabio.nasa.discovery.bean.Plateau;
-import sako.fabio.nasa.discovery.bean.Probe;
 import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
+import sako.fabio.nasa.discovery.model.Coordination;
+import sako.fabio.nasa.discovery.model.Identify;
+import sako.fabio.nasa.discovery.model.Plateau;
+import sako.fabio.nasa.discovery.model.Probe;
 /**
  * 
  * @author fabio
@@ -23,14 +23,14 @@ public interface DiscoveryManagerInterface {
 	 * @param name
 	 * @param posXInitial
 	 * @param posYInitial
-	 * @param cardinalPointInitial
+	 * @param direction
 	 * @return
 	 * @throws BordersInvasionException
 	 * @throws BusyPlaceException
 	 * @throws AlreadyBoundException
 	 * @throws AlreadyCreatedException
 	 */
-	public Probe addProbe(Identify<String> name, Coordination coordination, Direction cardinalPointInitial);
+	public Probe addProbe(Identify<String> name, Coordination coordination, Direction direction);
 	
 	/**
 	 * Executa comandos da Sonda

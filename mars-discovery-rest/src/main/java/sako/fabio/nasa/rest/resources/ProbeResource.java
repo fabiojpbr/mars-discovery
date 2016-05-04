@@ -2,8 +2,8 @@ package sako.fabio.nasa.rest.resources;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import sako.fabio.nasa.discovery.bean.Coordination;
 import sako.fabio.nasa.discovery.enums.Direction;
+import sako.fabio.nasa.discovery.model.Coordination;
 
 public class ProbeResource extends ResourceSupport{
 	private String name;
