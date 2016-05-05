@@ -9,21 +9,25 @@ import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Status;
 
 public class CommandExecution<I extends Identify<T>, T> {
-	private I id;
+	private I name;
 	private Status status;
 	private String message;
 	private Collection<Command> commands;
 	
 	@JsonCreator
-	public CommandExecution(@JsonProperty("id") I id, @JsonProperty("commands") Collection<Command> commands) {
+	public CommandExecution(@JsonProperty("name") I name, @JsonProperty("commands") Collection<Command> commands) {
 		super();
-		this.id = id;
+		this.name = name;
 		this.commands = commands;
 	}
 
-	public I getId() {
-		return id;
+
+
+	public I getName() {
+		return name;
 	}
+
+
 
 	public Collection<Command> getCommands() {
 		return commands;

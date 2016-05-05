@@ -26,9 +26,9 @@ public class CommandExecutionResourceAssembler extends ResourceAssemblerSupport<
 
 	@Override
 	public CommandExecutionResource toResource(CommandExecution<Identify<String>, String> entity) {
-		CommandExecutionResource resource = new CommandExecutionResource(entity.getId(), entity.getStatus(), entity.getMessage());
+		CommandExecutionResource resource = new CommandExecutionResource(entity.getName(), entity.getStatus(), entity.getMessage());
 		if(!entity.getStatus().equals(Status.NOT_FOUND)){
-			resource.add(linkTo(methodOn(DiscoveryManagerController.class).getProbe(entity.getId().getId())).withSelfRel());
+			resource.add(linkTo(methodOn(DiscoveryManagerController.class).getProbe(entity.getName().getId())).withSelfRel());
 		}
 		return resource;
 	}

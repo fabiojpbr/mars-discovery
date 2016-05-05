@@ -132,7 +132,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		
 		for(CommandExecution<Identify<String>, String> execution: commandExecutions){
 			try{
-				executeCommand(execution.getId(), execution.getCommands());
+				executeCommand(execution.getName(), execution.getCommands());
 				execution.setStatusExecution(Status.OK, "Executado com sucesso");
 			}catch(BusyPlaceException | BordersInvasionException e){
 				execution.setStatusExecution(Status.ERROR, e.getMessage());

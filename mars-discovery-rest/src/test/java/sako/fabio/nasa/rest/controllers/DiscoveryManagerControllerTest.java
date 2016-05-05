@@ -1,8 +1,8 @@
 package sako.fabio.nasa.rest.controllers;
 
 import static java.lang.String.format;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,7 +37,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import sako.fabio.nasa.configuration.Application;
-import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.enums.Status;
 import sako.fabio.nasa.discovery.manager.DiscoveryManager;

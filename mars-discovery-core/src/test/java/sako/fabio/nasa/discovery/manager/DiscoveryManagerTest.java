@@ -101,13 +101,13 @@ public class DiscoveryManagerTest {
 		Direction directionExpected2 = Direction.E;
 		
 		for(CommandExecution<Identify<String>, String> commandResult: result){
-			Probe p = discoveryManager.findProbeByName(commandResult.getId());
-			if(commandResult.getId().equals(id)){
+			Probe p = discoveryManager.findProbeByName(commandResult.getName());
+			if(commandResult.getName().equals(id)){
 				Assert.assertEquals(Status.OK, commandResult.getStatus());
 				
 				Assert.assertEquals(coordinationExpected1, p.getCoordination());
 				Assert.assertEquals(directionExpected1, p.getDirection());
-			}else if(commandResult.getId().equals(id2)){
+			}else if(commandResult.getName().equals(id2)){
 				Assert.assertEquals(Status.OK, commandResult.getStatus());
 				Assert.assertEquals(coordinationExpected2, p.getCoordination());
 				Assert.assertEquals(directionExpected2, p.getDirection());
@@ -138,13 +138,13 @@ public class DiscoveryManagerTest {
 		Direction directionExpected2 = Direction.E;
 		
 		for(CommandExecution<Identify<String>, String> commandResult: result){
-			Probe p = discoveryManager.findProbeByName(commandResult.getId());
-			if(commandResult.getId().equals(id)){
+			Probe p = discoveryManager.findProbeByName(commandResult.getName());
+			if(commandResult.getName().equals(id)){
 				Assert.assertEquals(Status.ERROR, commandResult.getStatus());
 				
 				Assert.assertEquals(coordinationExpected1, p.getCoordination());
 				Assert.assertEquals(directionExpected1, p.getDirection());
-			}else if(commandResult.getId().equals(id2)){
+			}else if(commandResult.getName().equals(id2)){
 				Assert.assertEquals(Status.OK, commandResult.getStatus());
 				Assert.assertEquals(coordinationExpected2, p.getCoordination());
 				Assert.assertEquals(directionExpected2, p.getDirection());
@@ -175,13 +175,13 @@ public class DiscoveryManagerTest {
 		Direction directionExpected2 = Direction.E;
 		
 		for(CommandExecution<Identify<String>, String> commandResult: result){
-			Probe p = discoveryManager.findProbeByName(commandResult.getId());
-			if(commandResult.getId().equals(id)){
+			Probe p = discoveryManager.findProbeByName(commandResult.getName());
+			if(commandResult.getName().equals(id)){
 				Assert.assertEquals(Status.ERROR, commandResult.getStatus());
 				
 				Assert.assertEquals(coordinationExpected1, p.getCoordination());
 				Assert.assertEquals(directionExpected1, p.getDirection());
-			}else if(commandResult.getId().equals(id2)){
+			}else if(commandResult.getName().equals(id2)){
 				Assert.assertEquals(Status.OK, commandResult.getStatus());
 				Assert.assertEquals(coordinationExpected2, p.getCoordination());
 				Assert.assertEquals(directionExpected2, p.getDirection());
@@ -210,13 +210,13 @@ public class DiscoveryManagerTest {
 		
 		for(CommandExecution<Identify<String>, String> commandResult: result){
 			
-			if(commandResult.getId().equals(id)){
-				Probe p = discoveryManager.findProbeByName(commandResult.getId());
+			if(commandResult.getName().equals(id)){
+				Probe p = discoveryManager.findProbeByName(commandResult.getName());
 				Assert.assertEquals(Status.OK, commandResult.getStatus());
 				
 				Assert.assertEquals(coordinationExpected1, p.getCoordination());
 				Assert.assertEquals(directionExpected1, p.getDirection());
-			}else if(commandResult.getId().equals(id2)){
+			}else if(commandResult.getName().equals(id2)){
 				Assert.assertEquals(Status.NOT_FOUND, commandResult.getStatus());
 
 			}else{

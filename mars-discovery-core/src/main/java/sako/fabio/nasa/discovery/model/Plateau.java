@@ -66,7 +66,7 @@ public class Plateau{
 	public void alterCoordination(Coordination coordination, Probe value){
 		if(coordination.getY() >= 0 && coordination.getY() <= height && coordination.getX() >=0 && coordination.getX() <= width){
 			if(mapElementCoordination.get(coordination) != null){
-				throw new BusyPlaceException();
+				throw new BusyPlaceException(String.format("The probe[%s] is in this coordination %s", mapElementCoordination.get(coordination).getName(), coordination));
 			}
 			mapElementCoordination.remove(value.getCoordination());
 			mapElementCoordination.put(coordination, value);
