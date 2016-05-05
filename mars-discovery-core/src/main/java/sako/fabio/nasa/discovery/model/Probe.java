@@ -5,12 +5,14 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import sako.fabio.nasa.discovery.enums.Direction;
+import sako.fabio.nasa.discovery.enums.Status;
 import sako.fabio.nasa.discovery.interfaces.AxisMovable;
 import sako.fabio.nasa.discovery.interfaces.Controllable;
 /**
@@ -31,6 +33,7 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	private Direction direction;
 	private Coordination coordination;
 	private Plateau plateau;
+	private Status status;
 	
 	/**
 	 * Construtor da Sonda
@@ -155,6 +158,16 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	public void downY(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() , this.coordination.getY()-1);
 		alterCoordination(newCoordination);
+	}
+	
+	@JsonIgnore
+	public Status getStatus() {
+		return status;
+	}
+	
+	@JsonIgnore
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 	/**
 	 * Altera a coordenada da Sonda

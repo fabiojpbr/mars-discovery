@@ -2,7 +2,9 @@ package sako.fabio.nasa.discovery.manager.interfaces;
 
 import java.util.Collection;
 
+import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Direction;
+import sako.fabio.nasa.discovery.model.CommandExecution;
 import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
@@ -29,7 +31,13 @@ public interface DiscoveryManagerInterface {
 	 * @param commands Lista de comandos a ser executado
 	 * @return
 	 */
-	public Probe executeCommand(Identify<String> name, Collection<String> commands);
+	public Probe executeCommand(Identify<String> name, Collection<Command> commands);
+	/**
+	 * Executa uma sequencia de commando de uma lista de sondas
+	 * @param commandExecutions
+	 * @return
+	 */
+	public Collection<CommandExecution<Identify<String>, String>> executeCommand(Collection<CommandExecution<Identify<String>, String>> commandExecutions);
 
 	/**
 	 * Configura o Planalto

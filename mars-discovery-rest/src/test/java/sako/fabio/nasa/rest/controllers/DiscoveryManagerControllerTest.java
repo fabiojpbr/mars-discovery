@@ -9,11 +9,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static sako.fabio.nasa.discovery.enums.Command.L;
+import static sako.fabio.nasa.discovery.enums.Command.M;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,8 +38,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import sako.fabio.nasa.configuration.Application;
+import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Direction;
+import sako.fabio.nasa.discovery.enums.Status;
 import sako.fabio.nasa.discovery.manager.DiscoveryManager;
+import sako.fabio.nasa.discovery.model.CommandExecution;
 import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
@@ -163,7 +171,7 @@ public class DiscoveryManagerControllerTest {
 		List<String> commands = Arrays.asList("X","M","L","M");
 		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
 				.content(json(commands)).contentType(contentType))
-				.andExpect(status().isNotAcceptable());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -176,6 +184,27 @@ public class DiscoveryManagerControllerTest {
 		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
 				.content(json(commands)).contentType(contentType))
 				.andExpect(status().isConflict());
+	}
+	
+	@Test
+	public void testExecuteCommandExecutionProbe() throws IOException, Exception{
+		Identify<String> nameProbe = new Identify<String>(PROPE_1_NAME);
+		Identify<String> nameProbe2 = new Identify<String>(PROPE_2_NAME);
+		Identify<String> nameNotFound = new Identify<String>("NotExist");
+		Probe probe2 = new Probe(nameProbe2, new Coordination(1, 2), Direction.E);
+		discoveryManager.addProbe(probe2.getName(), probe2.getCoordination(), probe2.getDirection());
+		Collection<CommandExecution<Identify<String>, String>> commandExecutions = new ArrayList<>();
+		commandExecutions.add(new CommandExecution<Identify<String>, String>(nameProbe, Arrays.asList(M,L)));
+		commandExecutions.add(new CommandExecution<Identify<String>, String>(nameNotFound, Arrays.asList(M,L)));
+		commandExecutions.add(new CommandExecution<Identify<String>, String>(nameProbe2, Arrays.asList(L,L,M,M)));
+		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe"))
+				.content(json(commandExecutions)).contentType(contentType))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(3)))
+				.andExpect(jsonPath("$[0].status", is(Status.OK.name())))
+				.andExpect(jsonPath("$[1].status", is(Status.NOT_FOUND.name())))
+				.andExpect(jsonPath("$[2].status", is(Status.ERROR.name())))
+				;
 	}
 	
 	@Test

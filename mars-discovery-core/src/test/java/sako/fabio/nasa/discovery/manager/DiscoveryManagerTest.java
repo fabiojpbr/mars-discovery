@@ -1,5 +1,10 @@
 package sako.fabio.nasa.discovery.manager;
 
+import static sako.fabio.nasa.discovery.enums.Command.L;
+import static sako.fabio.nasa.discovery.enums.Command.M;
+import static sako.fabio.nasa.discovery.enums.Command.R;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -8,12 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import junit.framework.Assert;
+import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.enums.Direction;
+import sako.fabio.nasa.discovery.enums.Status;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
-import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
 import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
+import sako.fabio.nasa.discovery.model.CommandExecution;
 import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
@@ -26,6 +33,8 @@ import sako.fabio.nasa.discovery.model.Probe;
 public class DiscoveryManagerTest {
 	
 	private static final String PROBE_NAME = "probe_1";
+
+	private static final String PROBE_NAME_2 = "probe_2";
 	
 	private DiscoveryManagerInterface discoveryManager;
 	
@@ -72,6 +81,151 @@ public class DiscoveryManagerTest {
 	}
 	
 	@Test
+	public void testCommandExecution(){
+		Coordination coordination = new Coordination(1, 2);
+		Identify<String> id = new Identify<String>(PROBE_NAME);
+		Direction directionInitial = Direction.N;
+		discoveryManager.addProbe(id, coordination, directionInitial);
+		
+		Coordination coordination2 = new Coordination(3, 3);
+		Identify<String> id2 = new Identify<String>(PROBE_NAME_2);
+		Direction directionInitial2 = Direction.E;
+		discoveryManager.addProbe(id2, coordination2, directionInitial2);
+		Collection<CommandExecution<Identify<String>, String>> commands = new ArrayList<>();
+		commands.add(new CommandExecution<Identify<String>, String>(id, Arrays.asList(L,M,L,M,L,M,L,M,M)));
+		commands.add(new CommandExecution<Identify<String>, String>(id2, Arrays.asList(M,M,R,M,M,R,M,R,R,M)));
+		Collection<CommandExecution<Identify<String>, String>> result = discoveryManager.executeCommand(commands);
+		Coordination coordinationExpected1 = new Coordination(1, 3);
+		Direction directionExpected1 = Direction.N;
+		Coordination coordinationExpected2 = new Coordination(5, 1);
+		Direction directionExpected2 = Direction.E;
+		
+		for(CommandExecution<Identify<String>, String> commandResult: result){
+			Probe p = discoveryManager.findProbeByName(commandResult.getId());
+			if(commandResult.getId().equals(id)){
+				Assert.assertEquals(Status.OK, commandResult.getStatus());
+				
+				Assert.assertEquals(coordinationExpected1, p.getCoordination());
+				Assert.assertEquals(directionExpected1, p.getDirection());
+			}else if(commandResult.getId().equals(id2)){
+				Assert.assertEquals(Status.OK, commandResult.getStatus());
+				Assert.assertEquals(coordinationExpected2, p.getCoordination());
+				Assert.assertEquals(directionExpected2, p.getDirection());
+			}else{
+				Assert.fail();
+			}
+		}
+	}
+	
+	@Test
+	public void testCommandExecutionBusyPlace(){
+		Coordination coordination = new Coordination(0, 0);
+		Identify<String> id = new Identify<String>(PROBE_NAME);
+		Direction directionInitial = Direction.N;
+		discoveryManager.addProbe(id, coordination, directionInitial);
+		
+		Coordination coordination2 = new Coordination(0, 1);
+		Identify<String> id2 = new Identify<String>(PROBE_NAME_2);
+		Direction directionInitial2 = Direction.E;
+		discoveryManager.addProbe(id2, coordination2, directionInitial2);
+		Collection<CommandExecution<Identify<String>, String>> commands = new ArrayList<>();
+		commands.add(new CommandExecution<Identify<String>, String>(id, Arrays.asList(M)));
+		commands.add(new CommandExecution<Identify<String>, String>(id2, Arrays.asList(M)));
+		Collection<CommandExecution<Identify<String>, String>> result = discoveryManager.executeCommand(commands);
+		Coordination coordinationExpected1 = new Coordination(0, 0);
+		Direction directionExpected1 = Direction.N;
+		Coordination coordinationExpected2 = new Coordination(1, 1);
+		Direction directionExpected2 = Direction.E;
+		
+		for(CommandExecution<Identify<String>, String> commandResult: result){
+			Probe p = discoveryManager.findProbeByName(commandResult.getId());
+			if(commandResult.getId().equals(id)){
+				Assert.assertEquals(Status.ERROR, commandResult.getStatus());
+				
+				Assert.assertEquals(coordinationExpected1, p.getCoordination());
+				Assert.assertEquals(directionExpected1, p.getDirection());
+			}else if(commandResult.getId().equals(id2)){
+				Assert.assertEquals(Status.OK, commandResult.getStatus());
+				Assert.assertEquals(coordinationExpected2, p.getCoordination());
+				Assert.assertEquals(directionExpected2, p.getDirection());
+			}else{
+				Assert.fail();
+			}
+		}
+	}
+	
+	@Test
+	public void testCommandExecutionBorderInvasion(){
+		Coordination coordination = new Coordination(0, 0);
+		Identify<String> id = new Identify<String>(PROBE_NAME);
+		Direction directionInitial = Direction.S;
+		discoveryManager.addProbe(id, coordination, directionInitial);
+		
+		Coordination coordination2 = new Coordination(0, 1);
+		Identify<String> id2 = new Identify<String>(PROBE_NAME_2);
+		Direction directionInitial2 = Direction.E;
+		discoveryManager.addProbe(id2, coordination2, directionInitial2);
+		Collection<CommandExecution<Identify<String>, String>> commands = new ArrayList<>();
+		commands.add(new CommandExecution<Identify<String>, String>(id, Arrays.asList(M)));
+		commands.add(new CommandExecution<Identify<String>, String>(id2, Arrays.asList(M)));
+		Collection<CommandExecution<Identify<String>, String>> result = discoveryManager.executeCommand(commands);
+		Coordination coordinationExpected1 = new Coordination(0, 0);
+		Direction directionExpected1 = Direction.S;
+		Coordination coordinationExpected2 = new Coordination(1, 1);
+		Direction directionExpected2 = Direction.E;
+		
+		for(CommandExecution<Identify<String>, String> commandResult: result){
+			Probe p = discoveryManager.findProbeByName(commandResult.getId());
+			if(commandResult.getId().equals(id)){
+				Assert.assertEquals(Status.ERROR, commandResult.getStatus());
+				
+				Assert.assertEquals(coordinationExpected1, p.getCoordination());
+				Assert.assertEquals(directionExpected1, p.getDirection());
+			}else if(commandResult.getId().equals(id2)){
+				Assert.assertEquals(Status.OK, commandResult.getStatus());
+				Assert.assertEquals(coordinationExpected2, p.getCoordination());
+				Assert.assertEquals(directionExpected2, p.getDirection());
+			}else{
+				Assert.fail();
+			}
+		}
+	}
+	
+	@Test
+	public void testCommandExecutionNotFound(){
+		Coordination coordination = new Coordination(0, 0);
+		Identify<String> id = new Identify<String>(PROBE_NAME);
+		Direction directionInitial = Direction.N;
+		discoveryManager.addProbe(id, coordination, directionInitial);
+		
+		Identify<String> id2 = new Identify<String>(PROBE_NAME_2);
+
+		Collection<CommandExecution<Identify<String>, String>> commands = new ArrayList<>();
+		commands.add(new CommandExecution<Identify<String>, String>(id, Arrays.asList(M)));
+		commands.add(new CommandExecution<Identify<String>, String>(id2, Arrays.asList(M)));
+		Collection<CommandExecution<Identify<String>, String>> result = discoveryManager.executeCommand(commands);
+		Coordination coordinationExpected1 = new Coordination(0, 1);
+		Direction directionExpected1 = Direction.N;
+
+		
+		for(CommandExecution<Identify<String>, String> commandResult: result){
+			
+			if(commandResult.getId().equals(id)){
+				Probe p = discoveryManager.findProbeByName(commandResult.getId());
+				Assert.assertEquals(Status.OK, commandResult.getStatus());
+				
+				Assert.assertEquals(coordinationExpected1, p.getCoordination());
+				Assert.assertEquals(directionExpected1, p.getDirection());
+			}else if(commandResult.getId().equals(id2)){
+				Assert.assertEquals(Status.NOT_FOUND, commandResult.getStatus());
+
+			}else{
+				Assert.fail();
+			}
+		}
+	}
+	
+	@Test
 	public void testCommand(){
 		int x = 1;
 		int y = 2;
@@ -81,7 +235,7 @@ public class DiscoveryManagerTest {
 
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 
-		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
+		List<Command> commands = Arrays.asList(L,M,L,M,L,M,L,M,M);
 		Probe probe = discoveryManager.executeCommand(id, commands);
 		int xExpected = 1;
 		int yExpected = 3;
@@ -89,19 +243,6 @@ public class DiscoveryManagerTest {
 		Assert.assertEquals(xExpected, probe.getCoordination().getX());
 		Assert.assertEquals(yExpected, probe.getCoordination().getY());
 		Assert.assertEquals(cardinalPointInitial, cardinalPointExpected);
-	}
-	
-	@Test(expected=InvalidCommandException.class)
-	public void testCommandInvalid(){
-		int x = 1;
-		int y = 2;
-		Identify<String> id = new Identify<String>(PROBE_NAME);
-		Direction cardinalPointInitial = Direction.N;
-		Coordination coordination = new Coordination(x, y);
-
-		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
-		List<String> commands = Arrays.asList("L","M","L","M","L","x","L","M","M");
-		discoveryManager.executeCommand(id, commands);
 	}
 	
 	@Test(expected=BusyPlaceException.class)
@@ -120,14 +261,14 @@ public class DiscoveryManagerTest {
 		Coordination coordination2 = new Coordination(x2, y2);
 		discoveryManager.addProbe(id2, coordination2, cardinalPointInitial2);
 		
-		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
+		List<Command> commands = Arrays.asList(L,M,L,M,L,M,L,M,M);
 		discoveryManager.executeCommand(id, commands);
 	}
 	
 	@Test(expected=ObjectNasaNotFoundException.class)
 	public void testCommandProbeNotFound() {
 		Identify<String> id = new Identify<String>(PROBE_NAME);		
-		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
+		List<Command> commands = Arrays.asList(L,M,L,M,L,M,L,M,M);
 		discoveryManager.executeCommand(id, commands);
 	}
 	

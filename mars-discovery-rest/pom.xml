@@ -7,7 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>mars-discovery-rest</artifactId>
-	
+
 	<properties>
 		<start-class>sako.fabio.nasa.configuration.Application</start-class>
 	</properties>
@@ -91,6 +91,7 @@
 				<configuration>
 					<mainClass>${start-class}</mainClass>
 					<layout>ZIP</layout>
+					<executable>true</executable>
 				</configuration>
 				<executions>
 					<execution>
@@ -99,6 +100,15 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
+				</configuration>
 			</plugin>
 
 		</plugins>

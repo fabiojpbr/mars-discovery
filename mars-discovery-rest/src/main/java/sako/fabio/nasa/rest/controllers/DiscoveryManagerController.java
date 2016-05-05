@@ -21,12 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import sako.fabio.nasa.discovery.enums.Command;
 import sako.fabio.nasa.discovery.manager.interfaces.DiscoveryManagerInterface;
+import sako.fabio.nasa.discovery.model.CommandExecution;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
 import sako.fabio.nasa.discovery.model.Probe;
+import sako.fabio.nasa.rest.convert.CommandExecutionResourceAssembler;
 import sako.fabio.nasa.rest.convert.PlateauResourceAssembler;
 import sako.fabio.nasa.rest.convert.ProbeResourceAssembler;
+import sako.fabio.nasa.rest.resources.CommandExecutionResource;
 import sako.fabio.nasa.rest.resources.PlateauResource;
 import sako.fabio.nasa.rest.resources.ProbeResource;
 
@@ -44,6 +48,8 @@ public class DiscoveryManagerController {
 	private PlateauResourceAssembler plateauResourceAssembler;
 	@Autowired
 	private ProbeResourceAssembler probeResourceAssembler;
+	@Autowired
+	private CommandExecutionResourceAssembler commandExecutionResourceAssembler;
 
 	/**
 	 * Serviço para criação/configuração do Planalto
@@ -105,17 +111,39 @@ public class DiscoveryManagerController {
 	 * @param commands Lista de Comandos
 	 * @return
 	 */
-	@ApiOperation(value = "Executar comandos", nickname = "Executar comandos")
+	@ApiOperation(value = "Executa comandos", nickname = "Executa comandos")
 	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/probe/{name}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
 					MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "Not Found"),
+	@ApiResponses(value = { 
+			@ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad Request"),
 			@ApiResponse(code = 409, message = "Conflit") })
 	@ResponseBody
 	public ProbeResource executeCommandProbe(@PathVariable("name") String name,
-			@RequestBody(required = true) Collection<String> commands) {
+			@RequestBody(required = true) Collection<Command> commands) {
 		Probe probe = discoveryManager.executeCommand(new Identify<String>(name), commands);
 		return probeResourceAssembler.toResource(probe);
+	}
+	
+	/**
+	 * Executa os comandos da Sonda
+	 * @param name Nome da Sonda que realizará os movimentos
+	 * @param commands Lista de Comandos
+	 * @return
+	 */
+	@ApiOperation(value = "Executa comandos para diversas Sondas", nickname = "Executa comandos para diversas Sondas")
+	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/probe", produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
+					MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	@ApiResponses(value = { 
+			@ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad Request"),
+			@ApiResponse(code = 409, message = "Conflit") })
+	@ResponseBody
+	public List<CommandExecutionResource> executeCommandProbe(@RequestBody(required = true) Collection<CommandExecution<Identify<String>, String>> commands) {
+		Collection<CommandExecution<Identify<String>, String>> result = discoveryManager.executeCommand(commands);
+		return commandExecutionResourceAssembler.toResources(result);
 	}
 
 	/**
