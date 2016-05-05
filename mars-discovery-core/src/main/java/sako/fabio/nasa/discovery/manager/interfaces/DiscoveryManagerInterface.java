@@ -1,12 +1,8 @@
 package sako.fabio.nasa.discovery.manager.interfaces;
 
-import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 
 import sako.fabio.nasa.discovery.enums.Direction;
-import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
-import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
-import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
