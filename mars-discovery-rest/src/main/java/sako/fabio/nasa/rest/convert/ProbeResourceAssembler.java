@@ -11,6 +11,11 @@ import sako.fabio.nasa.discovery.model.Probe;
 import sako.fabio.nasa.rest.controllers.DiscoveryManagerController;
 import sako.fabio.nasa.rest.resources.ProbeResource;
 @Component
+/**
+ * Converte a classe Probe para ProbeResource
+ * @author fabio
+ *
+ */
 public class ProbeResourceAssembler extends ResourceAssemblerSupport<Probe, ProbeResource> {
 
 	public ProbeResourceAssembler() {

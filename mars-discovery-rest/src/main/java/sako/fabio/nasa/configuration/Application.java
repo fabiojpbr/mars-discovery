@@ -15,13 +15,21 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @ComponentScan("sako.fabio.nasa")
+/**
+ * Classe que inicia a aplicação utilizando do SpringBoot
+ * @author fabio
+ *
+ */
 public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
-
+	/**
+	 * Bean do swagger
+	 * @return
+	 */
 	@Bean
-	public Docket newsApi() {
+	public Docket getSwagger() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("mars-discovery").apiInfo(apiInfo()).select()
 				.paths(regex("/mars-discovery.*")).build();
 	}
@@ -29,7 +37,7 @@ public class Application {
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("Mars Discovery")
 				.description("Mission: Explore Mars")
-				.contact("Fábio Sako").version("1.0")
+				.contact("Fábio").version("0.0.1-SNAPSHOT")
 				.build();
 	}
 }

@@ -4,7 +4,11 @@ import org.springframework.hateoas.ResourceSupport;
 
 import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.model.Coordination;
-
+/**
+ * Classe que permite usar Hateous para o recurso Probe
+ * @author fabio
+ *
+ */
 public class ProbeResource extends ResourceSupport{
 	private String name;
 	private Coordination coordination;

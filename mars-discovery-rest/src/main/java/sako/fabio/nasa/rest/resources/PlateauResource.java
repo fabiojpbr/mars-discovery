@@ -1,7 +1,11 @@
 package sako.fabio.nasa.rest.resources;
 
 import org.springframework.hateoas.ResourceSupport;
-
+/**
+ * Classe que permite usar Hateous para o recurso Plateau
+ * @author fabio
+ *
+ */
 public class PlateauResource extends ResourceSupport {
 	private int depth;
 	private int width;

@@ -10,6 +10,11 @@ import sako.fabio.nasa.rest.controllers.DiscoveryManagerController;
 import sako.fabio.nasa.rest.resources.PlateauResource;
 
 @Component
+/**
+ * Converte a classe Plateau para PlateauResource
+ * @author fabio
+ *
+ */
 public class PlateauResourceAssembler extends ResourceAssemblerSupport<Plateau, PlateauResource> {
 
 	public PlateauResourceAssembler() {

@@ -30,6 +30,11 @@ import sako.fabio.nasa.rest.convert.ProbeResourceAssembler;
 import sako.fabio.nasa.rest.resources.PlateauResource;
 import sako.fabio.nasa.rest.resources.ProbeResource;
 
+/**
+ * Classe Controller para gerenciar a exploração de Marte
+ * @author fabio
+ *
+ */
 @RestController
 @RequestMapping("/mars-discovery")
 public class DiscoveryManagerController {
@@ -40,6 +45,11 @@ public class DiscoveryManagerController {
 	@Autowired
 	private ProbeResourceAssembler probeResourceAssembler;
 
+	/**
+	 * Serviço para criação/configuração do Planalto
+	 * @param plateau Recebe os dados do Planalto
+	 * @return
+	 */
 	@ApiOperation(value = "Criar Planalto", nickname = "Criar Planalto")
 	@RequestMapping(method = RequestMethod.POST, path = "/plateau", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
@@ -55,6 +65,10 @@ public class DiscoveryManagerController {
 		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 
+	/**
+	 * Busca o Planalto configurado
+	 * @return Planalto criado/configurado
+	 */
 	@ApiOperation(value = "obter Planalto", nickname = "obter Planalto")
 	@RequestMapping(method = RequestMethod.GET, path = "/plateau", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
@@ -66,7 +80,12 @@ public class DiscoveryManagerController {
 		return plateauResourceAssembler.toResource(plateau);
 	}
 
-	@ApiOperation(value = "Criar Sonda", nickname = "Criar Sonda")
+	/**
+	 * Adiciona a Sonda no Planalto
+	 * @param probe Planalto
+	 * @return
+	 */
+	@ApiOperation(value = "Adiciona Sonda", nickname = "Adiciona Sonda")
 	@RequestMapping(method = RequestMethod.POST, path = "/plateau/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
@@ -80,6 +99,12 @@ public class DiscoveryManagerController {
 		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 
+	/**
+	 * Executa os comandos da Sonda
+	 * @param name Nome da Sonda que realizará os movimentos
+	 * @param commands Lista de Comandos
+	 * @return
+	 */
 	@ApiOperation(value = "Executar comandos", nickname = "Executar comandos")
 	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/probe/{name}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
@@ -93,6 +118,10 @@ public class DiscoveryManagerController {
 		return probeResourceAssembler.toResource(probe);
 	}
 
+	/**
+	 * Obter a lista de Sondas configurado no Planalto
+	 * @return Sondas que estão no Planalto
+	 */
 	@ApiOperation(value = "obter Sondas", nickname = "obter Sondas")
 	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
@@ -103,6 +132,11 @@ public class DiscoveryManagerController {
 		return probeResourceAssembler.toResources(probes);
 	}
 
+	/**
+	 * Obter a Sonda através do seu nome
+	 * @param name Nome da Sonda
+	 * @return
+	 */
 	@ApiOperation(value = "obter Sonda", nickname = "obter Sonda")
 	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe/{name}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
@@ -113,7 +147,12 @@ public class DiscoveryManagerController {
 		Probe probe = discoveryManager.findProbeByName(new Identify<String>(name));
 		return probeResourceAssembler.toResource(probe);
 	}
-
+	
+	/**
+	 * Remove a sonda através do seu nome
+	 * @param name Nome da sonda que será removida
+	 * @return
+	 */
 	@ApiOperation(value = "Remover Sonda", nickname = "Remover Sonda")
 	@RequestMapping(method = RequestMethod.DELETE, path = "/plateau/probe/{name}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
