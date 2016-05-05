@@ -38,7 +38,7 @@ public interface DiscoveryManagerInterface {
 	 * @param commands Lista de comandos a ser executado
 	 * @return
 	 */
-	public Probe command(Identify<String> name, Collection<String> commands);
+	public Probe executeCommand(Identify<String> name, Collection<String> commands);
 
 	/**
 	 * Configura o Planalto

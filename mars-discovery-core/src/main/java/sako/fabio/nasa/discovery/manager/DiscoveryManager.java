@@ -39,7 +39,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		return probe;
 	}
 
-	public Probe command(Identify<String> name, Collection<String> commands) {
+	public Probe executeCommand(Identify<String> name, Collection<String> commands) {
 		Probe probe = plateau.getProbeByName(name);
 		if(probe == null){
 			throw new ObjectNasaNotFoundException(String.format("Probe: %s not found", name));

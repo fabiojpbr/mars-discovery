@@ -78,7 +78,7 @@ public class DiscoveryManagerTest {
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
-		Probe probe = discoveryManager.command(id, commands);
+		Probe probe = discoveryManager.executeCommand(id, commands);
 		int xExpected = 1;
 		int yExpected = 3;
 		Direction cardinalPointExpected = Direction.N;
@@ -97,7 +97,7 @@ public class DiscoveryManagerTest {
 
 		discoveryManager.addProbe(id, coordination, cardinalPointInitial);
 		List<String> commands = Arrays.asList("L","M","L","M","L","x","L","M","M");
-		discoveryManager.command(id, commands);
+		discoveryManager.executeCommand(id, commands);
 	}
 	
 	@Test(expected=BusyPlaceException.class)
@@ -117,14 +117,14 @@ public class DiscoveryManagerTest {
 		discoveryManager.addProbe(id2, coordination2, cardinalPointInitial2);
 		
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
-		discoveryManager.command(id, commands);
+		discoveryManager.executeCommand(id, commands);
 	}
 	
 	@Test(expected=ObjectNasaNotFoundException.class)
 	public void testCommandProbeNotFound() {
 		Identify<String> id = new Identify<String>(PROBE_NAME);		
 		List<String> commands = Arrays.asList("L","M","L","M","L","M","L","M","M");
-		discoveryManager.command(id, commands);
+		discoveryManager.executeCommand(id, commands);
 	}
 	
 	@Test
@@ -198,6 +198,12 @@ public class DiscoveryManagerTest {
 	@Test(expected = ObjectNasaNotFoundException.class)
 	public void testDeleteProbeByNameNotFound(){
 		discoveryManager.deleteProbeByName(new Identify<String>(PROBE_NAME));
+	}
+	
+	@Test(expected = ObjectNasaNotFoundException.class)
+	public void deletePlateau(){
+		discoveryManager.deletePlateau();
+		discoveryManager.getPlateau();
 	}
 	
 	

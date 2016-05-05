@@ -1,14 +1,20 @@
 package sako.fabio.nasa.rest.controllers;
 
-import static org.hamcrest.Matchers.hasSize;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +28,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -49,6 +54,7 @@ public class DiscoveryManagerControllerTest {
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
+	@SuppressWarnings("rawtypes")
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
 	@Autowired
@@ -62,7 +68,11 @@ public class DiscoveryManagerControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		Plateau plateau = new Plateau(5, 5);
 		Probe probe = new Probe(new Identify<String>(PROPE_1_NAME), new Coordination(0, 0), Direction.N);
+		discoveryManager.deletePlateau();
 		discoveryManager.setPlateau(plateau);
+		for (Probe p : discoveryManager.getProbes()) {
+			discoveryManager.deleteProbeByName(p.getName());
+		}
 		discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
 	}
 
@@ -70,40 +80,170 @@ public class DiscoveryManagerControllerTest {
 	public void testCreatePlateau() throws IOException, Exception {
 		discoveryManager.deletePlateau();
 		Plateau plateau = new Plateau(5, 5);
-		mockMvc.perform(MockMvcRequestBuilders.post(String.format(FORMAT_CONTEXT, "plateau"))
+		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau"))
 				.content(this.json(plateau)).contentType(contentType))
-				.andExpect(MockMvcResultMatchers.status().isCreated());
+				.andExpect(status().isCreated());
+	}
+	
+	@Test
+	public void testCreatePlateauIllegalValues() throws IOException, Exception {
+		discoveryManager.deletePlateau();
+		Plateau plateau = new Plateau(0, 0);
+		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau"))
+				.content(this.json(plateau)).contentType(contentType))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public void testCreatePlateauAlreadyExists() throws IOException, Exception {
 		Plateau plateau = new Plateau(5, 5);
-		mockMvc.perform(MockMvcRequestBuilders.post(String.format(FORMAT_CONTEXT, "plateau")).content(this.json(plateau))
-				.contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
+		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau")).content(this.json(plateau))
+				.contentType(contentType)).andExpect(status().isConflict());
 	}
 
 	@Test
 	public void testGetPlateau() throws IOException, Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(String.format(FORMAT_CONTEXT, "plateau")).contentType(contentType))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.width", is(5)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.depth", is(5)))
+		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau")).contentType(contentType))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.width", is(5)))
+				.andExpect(jsonPath("$.depth", is(5)))
 				;
 	}
 	
 	@Test
 	public void testGetPlateauNotFound() throws IOException, Exception {
 		discoveryManager.deletePlateau();
-		mockMvc.perform(MockMvcRequestBuilders.get(String.format(FORMAT_CONTEXT, "plateau")).contentType(contentType))
-				.andExpect(MockMvcResultMatchers.status().isNotFound());
+		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau")).contentType(contentType))
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
 	public void testCreateProbe() throws IOException, Exception{
 		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(1, 1), Direction.E);
-		mockMvc.perform(MockMvcRequestBuilders.post(String.format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isCreated());
+		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isCreated());
+	}
+	
+	@Test
+	public void testCreateProbeAlreadyExistsSameName() throws IOException, Exception{
+		Probe probe = new Probe(new Identify<String>(PROPE_1_NAME), new Coordination(1, 1), Direction.E);
+		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
+	}
+	
+	@Test
+	public void testCreateProbeAlreadyExistsInPosition() throws IOException, Exception{
+		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(0, 0), Direction.E);
+		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
+	}
+	
+	@Test
+	public void testExecuteCommandProbe() throws IOException, Exception{
+		Identify<String> name = new Identify<String>(PROPE_1_NAME);
+		List<String> commands = Arrays.asList("M","M","R","M");
+		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.content(json(commands)).contentType(contentType))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.coordination.x", is(1)))
+				.andExpect(jsonPath("$.coordination.y", is(2)))
+				.andExpect(jsonPath("$.direction", is(Direction.E.name())))
+				;
+	}
+	
+	@Test
+	public void testExecuteCommandProbeBorderInvasion() throws IOException, Exception{
+		Identify<String> name = new Identify<String>(PROPE_1_NAME);
+		List<String> commands = Arrays.asList("M","M","L","M");
+		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.content(json(commands)).contentType(contentType))
+				.andExpect(status().isConflict());
+	}
+	
+	@Test
+	public void testExecuteCommandProbeInvalidCommand() throws IOException, Exception{
+		Identify<String> name = new Identify<String>(PROPE_1_NAME);
+		List<String> commands = Arrays.asList("X","M","L","M");
+		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.content(json(commands)).contentType(contentType))
+				.andExpect(status().isNotAcceptable());
 	}
 
+	@Test
+	public void testExecuteCommandProbeBusyPlace() throws IOException, Exception{
+		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(1, 2), Direction.E);
+		discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
+		Identify<String> name = new Identify<String>(PROPE_1_NAME);
+		List<String> commands = Arrays.asList("M","M","L","M");
+		
+		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.content(json(commands)).contentType(contentType))
+				.andExpect(status().isConflict());
+	}
+	
+	@Test
+	public void getProbe() throws Exception{
+		Identify<String> name = new Identify<String>(PROPE_1_NAME);
+		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.contentType(contentType))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.coordination.x", is(0)))
+				.andExpect(jsonPath("$.coordination.y", is(0)))
+				.andExpect(jsonPath("$.direction", is(Direction.N.name())));
+				
+	}
+	
+	@Test
+	public void getProbesOneProbe() throws Exception{
+		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe"))
+				.contentType(contentType))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].coordination.x", is(0)))
+				.andExpect(jsonPath("$[0].coordination.y", is(0)))
+				.andExpect(jsonPath("$[0].direction", is(Direction.N.name())));
+			
+	}
+	
+	@Test
+	public void getProbesTwoProbe() throws Exception{
+		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(1, 1), Direction.E);
+		discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
+		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe"))
+				.contentType(contentType))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(2)))
+				.andExpect(jsonPath("$[1].coordination.x", is(1)))
+				.andExpect(jsonPath("$[1].coordination.y", is(1)))
+				.andExpect(jsonPath("$[1].direction", is(Direction.E.name())));
+			
+	}
+	
+	@Test
+	public void getProbeNotFound() throws Exception{
+		Identify<String> name = new Identify<String>(PROPE_2_NAME);
+		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.contentType(contentType))
+		.andExpect(status().isNotFound());
+				
+	}
+	
+	@Test
+	public void deleteProbe() throws Exception{
+		Identify<String> name = new Identify<String>(PROPE_1_NAME);
+		mockMvc.perform(delete(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.contentType(contentType))
+		.andExpect(status().isNoContent());
+				
+	}
+	
+	@Test
+	public void deleteProbeNotFound() throws Exception{
+		Identify<String> name = new Identify<String>(PROPE_2_NAME);
+		mockMvc.perform(delete(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+				.contentType(contentType))
+		.andExpect(status().isNotFound());
+				
+	}
+	
+	@SuppressWarnings("unchecked")
 	protected String json(Object o) throws IOException {
 		MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
 		this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);

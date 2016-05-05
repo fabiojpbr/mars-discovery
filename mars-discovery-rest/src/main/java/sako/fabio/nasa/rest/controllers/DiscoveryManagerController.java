@@ -87,14 +87,14 @@ public class DiscoveryManagerController {
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 409, message = "Conflit") })
 	@ResponseBody
-	public ProbeResource commandProbe(@PathVariable("name") String name,
+	public ProbeResource executeCommandProbe(@PathVariable("name") String name,
 			@RequestBody(required = true) Collection<String> commands) {
-		Probe probe = discoveryManager.command(new Identify<String>(name), commands);
+		Probe probe = discoveryManager.executeCommand(new Identify<String>(name), commands);
 		return probeResourceAssembler.toResource(probe);
 	}
 
 	@ApiOperation(value = "obter Sondas", nickname = "obter Sondas")
-	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe/", produces = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success") })
 	@ResponseBody
@@ -104,7 +104,7 @@ public class DiscoveryManagerController {
 	}
 
 	@ApiOperation(value = "obter Sonda", nickname = "obter Sonda")
-	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe/{name}/", produces = {
+	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe/{name}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Probe.class),
 			@ApiResponse(code = 404, message = "Not Found") })
@@ -115,13 +115,13 @@ public class DiscoveryManagerController {
 	}
 
 	@ApiOperation(value = "Remover Sonda", nickname = "Remover Sonda")
-	@RequestMapping(method = RequestMethod.DELETE, path = "/plateau/probe/{name}/", produces = {
+	@RequestMapping(method = RequestMethod.DELETE, path = "/plateau/probe/{name}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
 			@ApiResponse(code = 404, message = "Not Found") })
 	@ResponseBody
 	public ResponseEntity<Void> deleteProbe(@PathVariable("name") String name) {
 		discoveryManager.deleteProbeByName(new Identify<String>(name));
-		return new ResponseEntity<Void>(HttpStatus.OK);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 }

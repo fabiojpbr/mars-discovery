@@ -22,7 +22,7 @@ public class ProbeResourceAssembler extends ResourceAssemblerSupport<Probe, Prob
 		ProbeResource probeResource = new ProbeResource(entity.getName().getId(),entity.getCoordination(), entity.getDirection());
 		probeResource.add(linkTo(methodOn(DiscoveryManagerController.class).getProbe(entity.getName().getId())).withSelfRel());
 		probeResource.add(linkTo(methodOn(DiscoveryManagerController.class).deleteProbe(entity.getName().getId())).withRel("delete"));
-		probeResource.add(linkTo(methodOn(DiscoveryManagerController.class).commandProbe(entity.getName().getId(), new ArrayList<>())).withRel("commands"));
+		probeResource.add(linkTo(methodOn(DiscoveryManagerController.class).executeCommandProbe(entity.getName().getId(), new ArrayList<>())).withRel("commands"));
 		return probeResource;
 	}
 
