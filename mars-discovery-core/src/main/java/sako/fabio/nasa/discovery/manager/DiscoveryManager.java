@@ -25,7 +25,10 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	public DiscoveryManager() {
 		super();
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Probe addProbe(Identify<String> name, Coordination coordination, Direction direction) {
 		if(plateau == null){
 			throw new ObjectNasaNotFoundException("Plateau not exists");
@@ -38,7 +41,10 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		plateau.alterCoordination(coordination, probe);
 		return probe;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Probe executeCommand(Identify<String> name, Collection<String> commands) {
 		Probe probe = plateau.getProbeByName(name);
 		if(probe == null){
@@ -54,7 +60,10 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		}
 		return probe;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setPlateau(Plateau plateau){
 		if(plateau == null || plateau.getHeight() < 1 || plateau.getWidth() < 1){
 			throw new IllegalArgumentException("Check the values, height and width need to be greater than 0");
@@ -65,11 +74,18 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		this.plateau = plateau;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collection<Probe> getProbes() {
 		Collection<Probe> probes = this.plateau.getProbes();
 		return probes; 
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Probe findProbeByName(Identify<String> identify) {
 		Probe probe = this.plateau.getProbeByName(identify);
@@ -79,6 +95,9 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		return probe;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Plateau getPlateau() {
 		if(plateau == null){
@@ -87,11 +106,17 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 		return plateau;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteProbeByName(Identify<String> identify) {
 		plateau.deleteProbeByName(identify);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deletePlateau() {
 		this.plateau = null;

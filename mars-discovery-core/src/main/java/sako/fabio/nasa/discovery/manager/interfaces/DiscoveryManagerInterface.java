@@ -19,16 +19,11 @@ import sako.fabio.nasa.discovery.model.Probe;
  */
 public interface DiscoveryManagerInterface {
 	/**
-	 * Adiciona uma Sonda no Planalto
-	 * @param name
-	 * @param posXInitial
-	 * @param posYInitial
-	 * @param direction
+	 * Adicionar uma Sonda no Planalto
+	 * @param name nome dado para sonda, é o seu identificador
+	 * @param coordination Coordenada inicial
+	 * @param direction Direção inicial
 	 * @return
-	 * @throws BordersInvasionException
-	 * @throws BusyPlaceException
-	 * @throws AlreadyBoundException
-	 * @throws AlreadyCreatedException
 	 */
 	public Probe addProbe(Identify<String> name, Coordination coordination, Direction direction);
 	
@@ -55,23 +50,23 @@ public interface DiscoveryManagerInterface {
 	/**
 	 * Busca a sonda pelo seu nome
 	 * @param name
-	 * @return
+	 * @return a Sonda solicitada
 	 */
 	public Probe findProbeByName(Identify<String> name);
 	/**
-	 * 
-	 * @return
+	 * Busca o Planalto
+	 * @return  Planalto
 	 */
 	public Plateau getPlateau();
 	
 	/**
-	 * 
+	 * Remove o Planalto atual
 	 */
 	public void deletePlateau();
 
 	/**
-	 * 
-	 * @param identify
+	 * Remove do Planalto a Sonda
+	 * @param identify identificador da Sonda que será removido
 	 */
 	public void deleteProbeByName(Identify<String> identify);
 }

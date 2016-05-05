@@ -62,10 +62,8 @@ public class Plateau{
 	 * Método que altera a posição de uma sonda no planalto
 	 * @param coordination Nova Coordenada
 	 * @param value objeto que será movido
-	 * @throws BordersInvasionException Exception ocorre quando o objeto ultrapassar o limite do planalto
-	 * @throws BusyPlaceException Exception ocorre quando o objeto encontra no caminho outro objeto
 	 */
-	public void alterCoordination(Coordination coordination, Probe value) throws BordersInvasionException,BusyPlaceException{
+	public void alterCoordination(Coordination coordination, Probe value){
 		if(coordination.getY() >= 0 && coordination.getY() <= height && coordination.getX() >=0 && coordination.getX() <= width){
 			if(mapElementCoordination.get(coordination) != null){
 				throw new BusyPlaceException();
@@ -90,7 +88,10 @@ public class Plateau{
 		Probe probe = mapElementCoordination.get(coordination);
 		return probe;
 	}
-	
+	/**
+	 * Remove do Planalto a Sonda através da sua identificação
+	 * @param name
+	 */
 	public void deleteProbeByName(Identify<String> name){
 		Coordination coordination = mapCoordinationKey.remove(name);
 		Probe probe = mapElementCoordination.remove(coordination);
@@ -99,6 +100,10 @@ public class Plateau{
 		}
 	}
 	
+	/**
+	 * Busca as sondas que estão no Planalto
+	 * @return {@link Collection} de Sondas
+	 */
 	@JsonIgnore
 	@XmlTransient
 	public Collection<Probe> getProbes(){

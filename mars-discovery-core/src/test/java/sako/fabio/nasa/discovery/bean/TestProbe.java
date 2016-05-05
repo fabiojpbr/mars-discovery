@@ -10,7 +10,11 @@ import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Plateau;
 import sako.fabio.nasa.discovery.model.Probe;
-
+/**
+ * Testes unitários da Sonda
+ * @author fabio
+ *
+ */
 public class TestProbe {
 	private static final int INIT_X = 1;
 	private static final int INIT_Y = 1;
@@ -19,13 +23,15 @@ public class TestProbe {
 	private Plateau plateau;
 	
 	@Before
+	/**
+	 * Configurar o ambiente antes de cada teste
+	 */
 	public void setUp(){
 		this.plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
 	}
 
-	
 	@Test
-	public void testMoveToNorth() throws BordersInvasionException, BusyPlaceException{
+	public void testMoveToNorth(){
 		
 		Probe probe = new Probe(null, new Coordination(INIT_X, INIT_Y) , Direction.N, plateau );
 		probe.move();

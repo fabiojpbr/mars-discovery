@@ -32,6 +32,12 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	private Coordination coordination;
 	private Plateau plateau;
 	
+	/**
+	 * Construtor da Sonda
+	 * @param name nome da Sonda, identificador da Sonda
+	 * @param coordination {@link Coordination} da Sonda
+	 * @param direction {@link Direction} da Sonda
+	 */
 	@JsonCreator
 	public Probe(
 			@JsonProperty("name")
@@ -40,73 +46,120 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 			Coordination coordination,
 			@JsonProperty("direction")
 			
-			Direction cardinalPoint) {
+			Direction direction) {
 		super();
-		this.direction = cardinalPoint;
+		this.direction = direction;
 		this.coordination = coordination;
 		this.name = name;
 	}
-	
-	public Probe(Identify<String> name, Coordination coordination, Direction cardinalPoint, Plateau plateau) {
-		this(name,coordination,cardinalPoint);
+	/**
+	 * Construtor da Sonda
+	 * @param name nome da Sonda, identificador da Sonda
+	 * @param coordination {@link Coordination} da Sonda
+	 * @param direction {@link Direction} da Sonda
+	 * @param plateau Planalto que a Sonda está
+	 */
+	public Probe(Identify<String> name, Coordination coordination, Direction direction, Plateau plateau) {
+		this(name,coordination,direction);
 		this.plateau = plateau;
 	}
 	
-	
+	/**
+	 * Direção apontada pela sonda
+	 * @return direção atual da Sonda
+	 */
 	@JacksonXmlElementWrapper(useWrapping=false)
 	@JacksonXmlProperty(localName="direction")
 	public Direction getDirection() {
 		return direction;
 	}
 	
+	/**
+	 * Coordenadas da Sonda
+	 * @return Coordenada atual da Sonda
+	 */
 	@JacksonXmlElementWrapper(useWrapping=false)
 	@JacksonXmlProperty(localName="coordination")
 	public Coordination getCoordination() {
 		return coordination;
 	}
-	
+	/**
+	 * Identificador da Sonda
+	 * @return identificador (nome) da Sonda
+	 */
 	@JacksonXmlElementWrapper(useWrapping=false)
 	@JacksonXmlProperty(localName="name")
 	public Identify<String> getName() {
 		return name;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void turnRight(){
 		this.direction = direction.getNextRight();
 		LOGGER.info(String.format("Probe: %s CMD: Turn Right, New Point: %s", this.name,direction));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void turnLeft(){
 		this.direction = direction.getNextLeft();
 		LOGGER.info(String.format("Probe: %s CMD: Turn Left, New Point: %s", this.name,direction));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void move(){
 		this.direction.move(this);
 		LOGGER.info(String.format("Probe: %s CMD: Move, New Position: (%s)", this.name,coordination));
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void upX(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() + 1, this.coordination.getY());
 		alterCoordination(newCoordination);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void downX(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() - 1, this.coordination.getY());
 		alterCoordination(newCoordination);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void upY(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() , this.coordination.getY()+1);
 		alterCoordination(newCoordination);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void downY(){
 		Coordination newCoordination = new Coordination(this.coordination.getX() , this.coordination.getY()-1);
 		alterCoordination(newCoordination);
 	}
-	
+	/**
+	 * Altera a coordenada da Sonda
+	 * @param newCoordination nova Coordenada
+	 */
 	private void alterCoordination(Coordination newCoordination){
 		this.plateau.alterCoordination(newCoordination, this);
 		this.coordination = newCoordination;

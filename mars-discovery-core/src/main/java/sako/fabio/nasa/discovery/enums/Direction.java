@@ -5,7 +5,7 @@ import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.interfaces.AxisMovable;
 
 /**
- * Enum que representa os Pontos Cardiais
+ * Enum que representa as Direções dos pontos Cardinais
  * N -> Norte
  * E -> Leste
  * S -> Sul
@@ -42,7 +42,7 @@ public enum Direction {
 	};
 	/**
 	 * Método que obtem o próximo ponto da Direção à direita
-	 * @return Retorna o Ponto da Direção à direita
+	 * @return ponto da Direção à direita
 	 */
 	public Direction getNextRight(){
 		
@@ -55,7 +55,7 @@ public enum Direction {
 	}
 	/**
 	 * Método que obtem o próximo ponto da Direção à esquerda
-	 * @return Retorna o ponto da Direção à esquerda
+	 * @return ponto da Direção à esquerda
 	 */
 	public Direction getNextLeft(){
 		int actual = this.ordinal();
@@ -65,6 +65,9 @@ public enum Direction {
 		}
 		return Direction.values()[actual];
 	}
-	
-	public abstract void move(AxisMovable movableXY)  throws BordersInvasionException, BusyPlaceException;
+	/**
+	 * Método abstrato utilizado no Enum {@link Direction} para realizar a movimentação
+	 * @param movableXY
+	 */
+	public abstract void move(AxisMovable movableXY);
 }

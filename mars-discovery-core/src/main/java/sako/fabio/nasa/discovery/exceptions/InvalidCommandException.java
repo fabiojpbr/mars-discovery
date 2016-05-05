@@ -1,5 +1,9 @@
 package sako.fabio.nasa.discovery.exceptions;
-
+/**
+ * Erro lançado quando informa um comando inválido
+ * @author fabio
+ *
+ */
 public class InvalidCommandException extends RuntimeException {
 
 	/**

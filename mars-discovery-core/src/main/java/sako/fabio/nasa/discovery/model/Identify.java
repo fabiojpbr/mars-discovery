@@ -11,8 +11,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * 
  * @author fabio
  *
- * @param <T>
- *            Tipo que este ID irá representar
+ * @param <T> Tipo que este ID irá representar
  */
 @JacksonXmlRootElement(localName="identify")
 public class Identify<T> {
@@ -21,8 +20,7 @@ public class Identify<T> {
 	/**
 	 * Construtor
 	 * 
-	 * @param id
-	 *            recebe o valor do ID
+	 * @param id  recebe o valor do ID
 	 */
 	@JsonCreator
 	public Identify(@JsonProperty("id") T id) {
@@ -33,7 +31,7 @@ public class Identify<T> {
 	/**
 	 * Recupera o valor do ID
 	 * 
-	 * @return
+	 * @return Identificador
 	 */
 	@JacksonXmlElementWrapper(useWrapping=false)
 	@JacksonXmlProperty(localName="id")

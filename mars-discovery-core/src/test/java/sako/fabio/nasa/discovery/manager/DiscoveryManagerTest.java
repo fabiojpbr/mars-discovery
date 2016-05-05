@@ -18,7 +18,11 @@ import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
 import sako.fabio.nasa.discovery.model.Probe;
-
+/**
+ * Testes unitários da Classe DiscoveryManager
+ * @author fabio
+ *
+ */
 public class DiscoveryManagerTest {
 	
 	private static final String PROBE_NAME = "probe_1";
