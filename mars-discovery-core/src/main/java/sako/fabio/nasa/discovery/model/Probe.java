@@ -12,7 +12,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import sako.fabio.nasa.discovery.enums.Direction;
-import sako.fabio.nasa.discovery.enums.Status;
 import sako.fabio.nasa.discovery.interfaces.AxisMovable;
 import sako.fabio.nasa.discovery.interfaces.Controllable;
 /**
@@ -33,7 +32,6 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	private Direction direction;
 	private Coordination coordination;
 	private Plateau plateau;
-	private Status status;
 	
 	/**
 	 * Construtor da Sonda
@@ -65,6 +63,11 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 	public Probe(Identify<String> name, Coordination coordination, Direction direction, Plateau plateau) {
 		this(name,coordination,direction);
 		this.plateau = plateau;
+	}
+	
+	@JsonIgnore
+	public Plateau getPlateau() {
+		return plateau;
 	}
 	
 	/**
@@ -160,15 +163,6 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 		alterCoordination(newCoordination);
 	}
 	
-	@JsonIgnore
-	public Status getStatus() {
-		return status;
-	}
-	
-	@JsonIgnore
-	public void setStatus(Status status) {
-		this.status = status;
-	}
 	/**
 	 * Altera a coordenada da Sonda
 	 * @param newCoordination nova Coordenada
@@ -186,7 +180,8 @@ public class Probe implements Serializable, AxisMovable,Controllable{
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
-
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -8,6 +8,7 @@ import sako.fabio.nasa.discovery.enums.Direction;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
 import sako.fabio.nasa.discovery.model.Coordination;
+import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
 import sako.fabio.nasa.discovery.model.Probe;
 /**
@@ -16,6 +17,7 @@ import sako.fabio.nasa.discovery.model.Probe;
  *
  */
 public class TestProbe {
+	private static final Identify<String> PLATEAU_NAME = new Identify<String>("OlympusMons");
 	private static final int INIT_X = 1;
 	private static final int INIT_Y = 1;
 	private static final int INIT_HEIGHT = 5;
@@ -27,7 +29,7 @@ public class TestProbe {
 	 * Configurar o ambiente antes de cada teste
 	 */
 	public void setUp(){
-		this.plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
+		this.plateau = new Plateau(PLATEAU_NAME, INIT_HEIGHT, INIT_WIDTH);
 	}
 
 	@Test
@@ -117,7 +119,7 @@ public class TestProbe {
 	}
 	@Test(expected=BordersInvasionException.class)
 	public void testProveMoveBeyondBorderSouthShouldThrowsException() throws BordersInvasionException, BusyPlaceException{
-		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
+		Plateau plateau = new Plateau(PLATEAU_NAME, INIT_HEIGHT, INIT_WIDTH);
 		int x = 0;
 		int y = 0;
 		Probe probe = new Probe(null, new Coordination(x, y), Direction.S, plateau );
@@ -126,7 +128,7 @@ public class TestProbe {
 	
 	@Test(expected=BordersInvasionException.class)
 	public void testProveMoveBeyondBorderNorthShouldThrowsException() throws BordersInvasionException, BusyPlaceException{
-		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
+		Plateau plateau = new Plateau(PLATEAU_NAME, INIT_HEIGHT, INIT_WIDTH);
 		int x = 0;
 		int y = 5;
 		Probe probe = new Probe(null, new Coordination(x, y), Direction.N, plateau );
@@ -135,7 +137,7 @@ public class TestProbe {
 	
 	@Test(expected=BordersInvasionException.class)
 	public void testProveMoveBeyondBorderWestShouldThrowsException() throws BordersInvasionException, BusyPlaceException{
-		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
+		Plateau plateau = new Plateau(PLATEAU_NAME, INIT_HEIGHT, INIT_WIDTH);
 		int x = 0;
 		int y = 0;
 		Probe probe = new Probe(null, new Coordination(x, y), Direction.W, plateau );
@@ -144,10 +146,10 @@ public class TestProbe {
 	
 	@Test(expected=BordersInvasionException.class)
 	public void testProveMoveBeyondBorderEASTShouldThrowsException() throws BordersInvasionException, BusyPlaceException{
-		Plateau plateau = new Plateau(INIT_HEIGHT, INIT_WIDTH);
+		Plateau plateau = new Plateau(PLATEAU_NAME, INIT_HEIGHT, INIT_WIDTH);
 		int x = 5;
 		int y = 0;
-		Probe probe = new Probe(null, new Coordination(x, y), Direction.E, plateau );
+		Probe probe = new Probe(PLATEAU_NAME, new Coordination(x, y), Direction.E, plateau );
 		probe.move();
 	}
 }

@@ -52,7 +52,10 @@ import sako.fabio.nasa.discovery.model.Probe;
 public class DiscoveryManagerControllerTest {
 
 	private static final String FORMAT_CONTEXT = "/mars-discovery/%s";
+	private static final String FORMAT_PLATEAU_URI = format(FORMAT_CONTEXT, "plateau/%s");
+	private static final String FORMAT_PROBE_URI = format(FORMAT_PLATEAU_URI,"%s/probe/%s");
 
+	private static final Identify<String> PLATEAU_NAME = new Identify<String>("OlympusMons");
 	private static final String PROPE_1_NAME = "Spirit";
 	private static final String PROPE_2_NAME = "Opportunity";
 	private MockMvc mockMvc;
@@ -72,20 +75,20 @@ public class DiscoveryManagerControllerTest {
 	@Before
 	public void setUp() {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		Plateau plateau = new Plateau(5, 5);
+		Plateau plateau = new Plateau(PLATEAU_NAME, 5, 5);
 		Probe probe = new Probe(new Identify<String>(PROPE_1_NAME), new Coordination(0, 0), Direction.N);
-		discoveryManager.deletePlateau();
+		discoveryManager.deletePlateau(PLATEAU_NAME);
 		discoveryManager.setPlateau(plateau);
-		for (Probe p : discoveryManager.getProbes()) {
-			discoveryManager.deleteProbeByName(p.getName());
+		for (Probe p : discoveryManager.getProbesByPlateauName(PLATEAU_NAME)) {
+			discoveryManager.deleteProbeByName(PLATEAU_NAME, p.getName());
 		}
-		discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
+		discoveryManager.addProbe(PLATEAU_NAME, probe.getName(), probe.getCoordination(), probe.getDirection());
 	}
 
 	@Test
 	public void testCreatePlateau() throws IOException, Exception {
-		discoveryManager.deletePlateau();
-		Plateau plateau = new Plateau(5, 5);
+		discoveryManager.deletePlateau(PLATEAU_NAME);
+		Plateau plateau = new Plateau(PLATEAU_NAME, 5, 5);
 		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau"))
 				.content(this.json(plateau)).contentType(contentType))
 				.andExpect(status().isCreated());
@@ -93,8 +96,8 @@ public class DiscoveryManagerControllerTest {
 	
 	@Test
 	public void testCreatePlateauIllegalValues() throws IOException, Exception {
-		discoveryManager.deletePlateau();
-		Plateau plateau = new Plateau(0, 0);
+		discoveryManager.deletePlateau(PLATEAU_NAME);
+		Plateau plateau = new Plateau(PLATEAU_NAME, 0, 0);
 		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau"))
 				.content(this.json(plateau)).contentType(contentType))
 				.andExpect(status().isBadRequest());
@@ -102,50 +105,50 @@ public class DiscoveryManagerControllerTest {
 
 	@Test
 	public void testCreatePlateauAlreadyExists() throws IOException, Exception {
-		Plateau plateau = new Plateau(5, 5);
+		Plateau plateau = new Plateau(PLATEAU_NAME, 5, 5);
 		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau")).content(this.json(plateau))
 				.contentType(contentType)).andExpect(status().isConflict());
 	}
 
 	@Test
 	public void testGetPlateau() throws IOException, Exception {
-		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau")).contentType(contentType))
+		mockMvc.perform(get(format(FORMAT_PLATEAU_URI, PLATEAU_NAME.getId())).contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.width", is(5)))
-				.andExpect(jsonPath("$.depth", is(5)))
+				.andExpect(jsonPath("$.height", is(5)))
 				;
 	}
 	
 	@Test
 	public void testGetPlateauNotFound() throws IOException, Exception {
-		discoveryManager.deletePlateau();
-		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau")).contentType(contentType))
+		discoveryManager.deletePlateau(PLATEAU_NAME);
+		mockMvc.perform(get(format(FORMAT_PLATEAU_URI, "plateau")).contentType(contentType))
 				.andExpect(status().isNotFound());
 	}
 	
 	@Test
 	public void testCreateProbe() throws IOException, Exception{
 		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(1, 1), Direction.E);
-		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isCreated());
+		mockMvc.perform(post(format(FORMAT_PLATEAU_URI,PLATEAU_NAME.getId()+"/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isCreated());
 	}
 	
 	@Test
 	public void testCreateProbeAlreadyExistsSameName() throws IOException, Exception{
 		Probe probe = new Probe(new Identify<String>(PROPE_1_NAME), new Coordination(1, 1), Direction.E);
-		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
+		mockMvc.perform(post(format(FORMAT_PLATEAU_URI,PLATEAU_NAME.getId()+"/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
 	}
 	
 	@Test
 	public void testCreateProbeAlreadyExistsInPosition() throws IOException, Exception{
 		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(0, 0), Direction.E);
-		mockMvc.perform(post(format(FORMAT_CONTEXT, "plateau/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
+		mockMvc.perform(post(format(FORMAT_PLATEAU_URI,PLATEAU_NAME.getId()+"/probe")).content(json(probe)).contentType(contentType)).andExpect(MockMvcResultMatchers.status().isConflict());
 	}
 	
 	@Test
 	public void testExecuteCommandProbe() throws IOException, Exception{
 		Identify<String> name = new Identify<String>(PROPE_1_NAME);
 		List<String> commands = Arrays.asList("M","M","R","M");
-		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(put(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.content(json(commands)).contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.coordination.x", is(1)))
@@ -158,7 +161,7 @@ public class DiscoveryManagerControllerTest {
 	public void testExecuteCommandProbeBorderInvasion() throws IOException, Exception{
 		Identify<String> name = new Identify<String>(PROPE_1_NAME);
 		List<String> commands = Arrays.asList("M","M","L","M");
-		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(put(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.content(json(commands)).contentType(contentType))
 				.andExpect(status().isConflict());
 	}
@@ -167,7 +170,7 @@ public class DiscoveryManagerControllerTest {
 	public void testExecuteCommandProbeInvalidCommand() throws IOException, Exception{
 		Identify<String> name = new Identify<String>(PROPE_1_NAME);
 		List<String> commands = Arrays.asList("X","M","L","M");
-		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(put(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.content(json(commands)).contentType(contentType))
 				.andExpect(status().isBadRequest());
 	}
@@ -175,11 +178,11 @@ public class DiscoveryManagerControllerTest {
 	@Test
 	public void testExecuteCommandProbeBusyPlace() throws IOException, Exception{
 		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(1, 2), Direction.E);
-		discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
+		discoveryManager.addProbe(PLATEAU_NAME, probe.getName(), probe.getCoordination(), probe.getDirection());
 		Identify<String> name = new Identify<String>(PROPE_1_NAME);
 		List<String> commands = Arrays.asList("M","M","L","M");
 		
-		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(put(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.content(json(commands)).contentType(contentType))
 				.andExpect(status().isConflict());
 	}
@@ -190,12 +193,12 @@ public class DiscoveryManagerControllerTest {
 		Identify<String> nameProbe2 = new Identify<String>(PROPE_2_NAME);
 		Identify<String> nameNotFound = new Identify<String>("NotExist");
 		Probe probe2 = new Probe(nameProbe2, new Coordination(1, 2), Direction.E);
-		discoveryManager.addProbe(probe2.getName(), probe2.getCoordination(), probe2.getDirection());
-		Collection<CommandExecution<Identify<String>, String>> commandExecutions = new ArrayList<>();
-		commandExecutions.add(new CommandExecution<Identify<String>, String>(nameProbe, Arrays.asList(M,L)));
-		commandExecutions.add(new CommandExecution<Identify<String>, String>(nameNotFound, Arrays.asList(M,L)));
-		commandExecutions.add(new CommandExecution<Identify<String>, String>(nameProbe2, Arrays.asList(L,L,M,M)));
-		mockMvc.perform(put(format(FORMAT_CONTEXT, "plateau/probe"))
+		discoveryManager.addProbe(PLATEAU_NAME, probe2.getName(), probe2.getCoordination(), probe2.getDirection());
+		Collection<CommandExecution> commandExecutions = new ArrayList<>();
+		commandExecutions.add(new CommandExecution(nameProbe, Arrays.asList(M,L)));
+		commandExecutions.add(new CommandExecution(nameNotFound, Arrays.asList(M,L)));
+		commandExecutions.add(new CommandExecution(nameProbe2, Arrays.asList(L,L,M,M)));
+		mockMvc.perform(put(format(FORMAT_PLATEAU_URI,PLATEAU_NAME.getId())+"/probe")
 				.content(json(commandExecutions)).contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(3)))
@@ -208,7 +211,7 @@ public class DiscoveryManagerControllerTest {
 	@Test
 	public void getProbe() throws Exception{
 		Identify<String> name = new Identify<String>(PROPE_1_NAME);
-		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(get(format(FORMAT_PROBE_URI,PLATEAU_NAME.getId() ,name.getId()))
 				.contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.coordination.x", is(0)))
@@ -219,7 +222,7 @@ public class DiscoveryManagerControllerTest {
 	
 	@Test
 	public void getProbesOneProbe() throws Exception{
-		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe"))
+		mockMvc.perform(get(format(FORMAT_PLATEAU_URI, PLATEAU_NAME.getId() +"/probe"))
 				.contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(1)))
@@ -232,8 +235,8 @@ public class DiscoveryManagerControllerTest {
 	@Test
 	public void getProbesTwoProbe() throws Exception{
 		Probe probe = new Probe(new Identify<String>(PROPE_2_NAME), new Coordination(1, 1), Direction.E);
-		discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
-		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe"))
+		discoveryManager.addProbe(PLATEAU_NAME, probe.getName(), probe.getCoordination(), probe.getDirection());
+		mockMvc.perform(get(format(FORMAT_PLATEAU_URI, PLATEAU_NAME.getId() +"/probe"))
 				.contentType(contentType))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
@@ -246,7 +249,7 @@ public class DiscoveryManagerControllerTest {
 	@Test
 	public void getProbeNotFound() throws Exception{
 		Identify<String> name = new Identify<String>(PROPE_2_NAME);
-		mockMvc.perform(get(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(get(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.contentType(contentType))
 		.andExpect(status().isNotFound());
 				
@@ -255,7 +258,7 @@ public class DiscoveryManagerControllerTest {
 	@Test
 	public void deleteProbe() throws Exception{
 		Identify<String> name = new Identify<String>(PROPE_1_NAME);
-		mockMvc.perform(delete(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(delete(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.contentType(contentType))
 		.andExpect(status().isNoContent());
 				
@@ -264,7 +267,7 @@ public class DiscoveryManagerControllerTest {
 	@Test
 	public void deleteProbeNotFound() throws Exception{
 		Identify<String> name = new Identify<String>(PROPE_2_NAME);
-		mockMvc.perform(delete(format(FORMAT_CONTEXT, "plateau/probe/"+name.getId()))
+		mockMvc.perform(delete(format(FORMAT_PROBE_URI, PLATEAU_NAME.getId(),name.getId()))
 				.contentType(contentType))
 		.andExpect(status().isNotFound());
 				

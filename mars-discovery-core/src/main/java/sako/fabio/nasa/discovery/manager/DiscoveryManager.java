@@ -17,14 +17,19 @@ import sako.fabio.nasa.discovery.model.Coordination;
 import sako.fabio.nasa.discovery.model.Identify;
 import sako.fabio.nasa.discovery.model.Plateau;
 import sako.fabio.nasa.discovery.model.Probe;
-
+import sako.fabio.nasa.discovery.validation.PlateauValidator;
+import sako.fabio.nasa.discovery.validation.ProbeValidator;
+/**
+ * Implementação do Gerenciador da Nasa
+ * Esta classe possui os principais métodos para realizar a Exploração a Marte
+ * @author fabio
+ *
+ */
 @Service
 public class DiscoveryManager implements DiscoveryManagerInterface {
 	private Plateau plateau;
 
-	public DiscoveryManager(Plateau plateau) {
-		this.plateau = plateau;
-	}
+
 
 	public DiscoveryManager() {
 		super();
@@ -34,24 +39,30 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Probe addProbe(Identify<String> name, Coordination coordination, Direction direction) {
-		if (plateau == null) {
-			throw new ObjectNasaNotFoundException("Plateau not exists");
-		}
+	public Probe addProbe(Identify<String> plateauName, Identify<String> name, Coordination coordination, Direction direction) {
+		checkPlateauExistis(plateauName);
+		
 		if (plateau.getProbeByName(name) != null) {
 			throw new AlreadyCreatedException("Probe already exists!");
 		}
 		Probe probe = new Probe(name, coordination, direction, this.plateau);
-
+		new ProbeValidator().check(probe);
 		plateau.alterCoordination(coordination, probe);
 		return probe;
+	}
+	
+	private void checkPlateauExistis(Identify<String> plateauName){
+		if (plateau == null || ! plateau.getName().equals(plateauName)) {
+			throw new ObjectNasaNotFoundException(String.format("Plateau[%s] not exists", plateauName));
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Probe executeCommand(Identify<String> name, Collection<Command> commands) {
+	public Probe executeCommand(Identify<String> plateauName, Identify<String> name, Collection<Command> commands) {
+		checkPlateauExistis(plateauName);
 		Probe probe = plateau.getProbeByName(name);
 		if (probe == null) {
 			throw new ObjectNasaNotFoundException(String.format("Probe: %s not found", name));
@@ -67,9 +78,7 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 */
 	@Override
 	public void setPlateau(Plateau plateau) {
-		if (plateau == null || plateau.getHeight() < 1 || plateau.getWidth() < 1) {
-			throw new IllegalArgumentException("Check the values, height and width need to be greater than 0");
-		}
+		new PlateauValidator().check(plateau);
 		if (this.plateau != null) {
 			throw new AlreadyCreatedException("Plateau already exits");
 		}
@@ -80,7 +89,8 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<Probe> getProbes() {
+	public Collection<Probe> getProbesByPlateauName(Identify<String> plateauName) {
+		checkPlateauExistis(plateauName);
 		Collection<Probe> probes = this.plateau.getProbes();
 		return probes;
 	}
@@ -89,7 +99,8 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Probe findProbeByName(Identify<String> identify) {
+	public Probe findProbeByName(Identify<String> plateauName, Identify<String> identify) {
+		checkPlateauExistis(plateauName);
 		Probe probe = this.plateau.getProbeByName(identify);
 		if (probe == null) {
 			throw new ObjectNasaNotFoundException(String.format("Probe: %s not found", identify));
@@ -101,10 +112,8 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Plateau getPlateau() {
-		if (plateau == null) {
-			throw new ObjectNasaNotFoundException("Plateau not found");
-		}
+	public Plateau findPlateauByName(Identify<String> plateauName) {
+		checkPlateauExistis(plateauName);
 		return plateau;
 	}
 
@@ -112,15 +121,16 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteProbeByName(Identify<String> identify) {
-		plateau.deleteProbeByName(identify);
+	public void deleteProbeByName(Identify<String> plateauName, Identify<String> probeId) {
+		checkPlateauExistis(plateauName);
+		plateau.deleteProbeByName(probeId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deletePlateau() {
+	public void deletePlateau(Identify<String> plateauName) {
 		this.plateau = null;
 	}
 
@@ -128,11 +138,11 @@ public class DiscoveryManager implements DiscoveryManagerInterface {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<CommandExecution<Identify<String>, String>> executeCommand(Collection<CommandExecution<Identify<String>, String>> commandExecutions) {
+	public Collection<CommandExecution> executeCommand(Identify<String> plateauName, Collection<CommandExecution> commandExecutions) {
 		
-		for(CommandExecution<Identify<String>, String> execution: commandExecutions){
+		for(CommandExecution execution: commandExecutions){
 			try{
-				executeCommand(execution.getName(), execution.getCommands());
+				executeCommand(plateauName, execution.getProbeName(), execution.getCommands());
 				execution.setStatusExecution(Status.OK, "Executado com sucesso");
 			}catch(BusyPlaceException | BordersInvasionException e){
 				execution.setStatusExecution(Status.ERROR, e.getMessage());

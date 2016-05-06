@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -21,6 +22,8 @@ import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
  */
 @JacksonXmlRootElement(localName="plateau")
 public class Plateau{
+	
+	private Identify<String> name;
 
 	private int height;
 
@@ -31,24 +34,36 @@ public class Plateau{
 	private HashMap<Identify<String>, Coordination> mapCoordinationKey;
 	/**
 	 * Construtor, no construtor define o tamanho do planalto a ser explorado
+	 * @param name nome do Planalto
 	 * @param height
 	 * @param width
 	 */
 	@JsonCreator
 	public Plateau(
+			@JsonProperty("name")
+			@JacksonXmlProperty(localName="name")
+			Identify<String> name,
 			@JsonProperty("height")
 			@JacksonXmlProperty(localName="height")
-			int height,
-			@JsonProperty("width")
+			int height, @JsonProperty("width")
 			@JacksonXmlProperty(localName="width")
 			int width) {
 		super();
+		this.name = name;
 		this.height = height;
 		this.width = width;
 		this.mapElementCoordination = new HashMap<Coordination, Probe>();
 		this.mapCoordinationKey = new HashMap<Identify<String>, Coordination>();
 	}
 	
+	@JacksonXmlElementWrapper(useWrapping=false)
+	@JacksonXmlProperty(localName="name")
+	public Identify<String> getName() {
+		return name;
+	}
+
+
+
 	@JacksonXmlProperty(localName="height")
 	public int getHeight() {
 		return height;
@@ -109,5 +124,6 @@ public class Plateau{
 	public Collection<Probe> getProbes(){
 		return mapElementCoordination.values();
 	}
-	
+
+
 }

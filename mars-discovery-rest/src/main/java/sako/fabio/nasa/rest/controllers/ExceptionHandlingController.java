@@ -2,7 +2,6 @@ package sako.fabio.nasa.rest.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,8 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import sako.fabio.nasa.discovery.exceptions.AlreadyCreatedException;
 import sako.fabio.nasa.discovery.exceptions.BordersInvasionException;
 import sako.fabio.nasa.discovery.exceptions.BusyPlaceException;
-import sako.fabio.nasa.discovery.exceptions.InvalidCommandException;
 import sako.fabio.nasa.discovery.exceptions.ObjectNasaNotFoundException;
+import sako.fabio.nasa.discovery.exceptions.ValidatorException;
 import sako.fabio.nasa.rest.model.ErrorInfo;
 
 /**
@@ -37,7 +36,8 @@ public class ExceptionHandlingController {
 	public ErrorInfo alreadyExists(HttpServletRequest req, Exception exception) {
 		String errorURL = req.getRequestURL().toString();
 		String message = exception.getMessage();
-		ErrorInfo errorInfo = new ErrorInfo(errorURL, message);
+		ErrorInfo errorInfo = new ErrorInfo(errorURL);
+		errorInfo.addMessage(message);
 		return errorInfo ;
 	}
 	
@@ -53,25 +53,12 @@ public class ExceptionHandlingController {
 	public ErrorInfo notFound(HttpServletRequest req, Exception exception){
 		String errorURL = req.getRequestURL().toString();
 		String message = exception.getMessage();
-		ErrorInfo errorInfo = new ErrorInfo(errorURL, message);
+		ErrorInfo errorInfo = new ErrorInfo(errorURL);
+		errorInfo.addMessage(message);
 		return errorInfo ;
 	}
 	
-	/**
-	 * Lançado quando o comando enviado não é conhecido
-	 * @param req
-	 * @param exception
-	 * @return
-	 */
-	@ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-	@ExceptionHandler(InvalidCommandException.class)
-	@ResponseBody
-	public ErrorInfo invalidCommand(HttpServletRequest req, Exception exception){
-		String errorURL = req.getRequestURL().toString();
-		String message = exception.getMessage();
-		ErrorInfo errorInfo = new ErrorInfo(errorURL, message);
-		return errorInfo ;
-	}
+
 	/**
 	 * Quando o objeto não conseguiu movimentar pois encontrou um obstaculo
 	 * @param req
@@ -84,7 +71,8 @@ public class ExceptionHandlingController {
 	public ErrorInfo notAllowed(HttpServletRequest req, Exception exception){
 		String errorURL = req.getRequestURL().toString();
 		String message = exception.getMessage();
-		ErrorInfo errorInfo = new ErrorInfo(errorURL, message);
+		ErrorInfo errorInfo = new ErrorInfo(errorURL);
+		errorInfo.addMessage(message);
 		return errorInfo ;
 	}
 	/**
@@ -94,12 +82,14 @@ public class ExceptionHandlingController {
 	 * @return
 	 */
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(IllegalArgumentException.class)
+	@ExceptionHandler(ValidatorException.class)
 	@ResponseBody
-	public ErrorInfo illegalArgument(HttpServletRequest req, Exception exception){
+	public ErrorInfo validatorException(HttpServletRequest req, ValidatorException exception){
 		String errorURL = req.getRequestURL().toString();
-		String message = exception.getMessage();
-		ErrorInfo errorInfo = new ErrorInfo(errorURL, message);
+		ErrorInfo errorInfo = new ErrorInfo(errorURL);
+		errorInfo.addAllMessage(exception.getMessages());
 		return errorInfo ;
 	}
+	
+	
 }

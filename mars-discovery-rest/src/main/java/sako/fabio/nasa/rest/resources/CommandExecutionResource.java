@@ -6,26 +6,34 @@ import sako.fabio.nasa.discovery.enums.Status;
 import sako.fabio.nasa.discovery.model.Identify;
 
 public class CommandExecutionResource extends ResourceSupport{
-	private Identify<String> identify;
+	private Identify<String> plateauName;
+	private Identify<String> probeName;
 	private Status status;
 	private String message;
-	public CommandExecutionResource(Identify<String> identify, Status status, String message) {
+	public CommandExecutionResource(Identify<String> plateauName, Identify<String> probeName, Status status, String message) {
 		super();
-		this.identify = identify;
+		this.plateauName = plateauName;
+		this.probeName = probeName;
 		this.status = status;
 		this.message = message;
 	}
 	
-	public Identify<String> getIdentify() {
-		return identify;
-	}
-
 	public Status getStatus() {
 		return status;
 	}
+	
 	public String getMessage() {
 		return message;
 	}
+
+	public Identify<String> getProbeName() {
+		return probeName;
+	}
+
+	public Identify<String> getPlateauName() {
+		return plateauName;
+	}
+	
 	
 
 }

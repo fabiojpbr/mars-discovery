@@ -23,9 +23,9 @@ public class PlateauResourceAssembler extends ResourceAssemblerSupport<Plateau, 
 
 	@Override
 	public PlateauResource toResource(Plateau entity) {
-		PlateauResource plateauResource = new PlateauResource(entity.getHeight(), entity.getWidth());
-		plateauResource.add(linkTo(methodOn(DiscoveryManagerController.class).getPlateau()).withSelfRel());
-		plateauResource.add(linkTo(methodOn(DiscoveryManagerController.class).getProbes()).withRel("probes"));
+		PlateauResource plateauResource = new PlateauResource(entity.getName().getId(),entity.getHeight(), entity.getWidth());
+		plateauResource.add(linkTo(methodOn(DiscoveryManagerController.class).getPlateau(entity.getName().getId())).withSelfRel());
+		plateauResource.add(linkTo(methodOn(DiscoveryManagerController.class).getProbes(entity.getName().getId())).withRel("probes"));
 		return plateauResource;
 	}
 

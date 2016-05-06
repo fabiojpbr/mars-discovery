@@ -7,21 +7,27 @@ import org.springframework.hateoas.ResourceSupport;
  *
  */
 public class PlateauResource extends ResourceSupport {
-	private int depth;
+	private String name;
+	private int height;
 	private int width;
 	
-	public PlateauResource(int depth, int width) {
+	public PlateauResource(String name,int depth, int width) {
 		super();
-		this.depth = depth;
+		this.name = name;
+		this.height = depth;
 		this.width = width;
 	}
 
-	public int getDepth() {
-		return depth;
+	public int getHeight() {
+		return height;
 	}
 
 	public int getWidth() {
 		return width;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 	

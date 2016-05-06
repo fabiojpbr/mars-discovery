@@ -67,7 +67,7 @@ public class DiscoveryManagerController {
 	public ResponseEntity<Void> createPlateau(@RequestBody Plateau plateau) {
 		discoveryManager.setPlateau(plateau);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setLocation(linkTo(methodOn(getClass()).getPlateau()).toUri());
+		headers.setLocation(linkTo(methodOn(getClass()).getPlateau(plateau.getName().getId())).toUri());
 		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 
@@ -76,13 +76,13 @@ public class DiscoveryManagerController {
 	 * @return Planalto criado/configurado
 	 */
 	@ApiOperation(value = "obter Planalto", nickname = "obter Planalto")
-	@RequestMapping(method = RequestMethod.GET, path = "/plateau", produces = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(method = RequestMethod.GET, path = "/plateau/{plateauName}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Plateau.class),
 			@ApiResponse(code = 404, message = "Not Found") })
 	@ResponseBody
-	public PlateauResource getPlateau() {
-		Plateau plateau = discoveryManager.getPlateau();
+	public PlateauResource getPlateau(@PathVariable("plateauName") String plateauName) {
+		Plateau plateau = discoveryManager.findPlateauByName(new Identify<String>(plateauName));
 		return plateauResourceAssembler.toResource(plateau);
 	}
 
@@ -92,16 +92,16 @@ public class DiscoveryManagerController {
 	 * @return
 	 */
 	@ApiOperation(value = "Adiciona Sonda", nickname = "Adiciona Sonda")
-	@RequestMapping(method = RequestMethod.POST, path = "/plateau/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(method = RequestMethod.POST, path = "/plateau/{plateauName}/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Created", response = Plateau.class),
 			@ApiResponse(code = 409, message = "Conflit") })
 	@ResponseBody
-	public ResponseEntity<Void> createProbe(@RequestBody Probe probe) {
-		Probe probeAdded = discoveryManager.addProbe(probe.getName(), probe.getCoordination(), probe.getDirection());
+	public ResponseEntity<Void> createProbe(@PathVariable("plateauName") String plateauName,@RequestBody Probe probe) {
+		Probe probeAdded = discoveryManager.addProbe(new Identify<String>(plateauName), probe.getName(), probe.getCoordination(), probe.getDirection());
 		HttpHeaders headers = new HttpHeaders();
-		headers.setLocation(linkTo(methodOn(getClass()).getProbe(probeAdded.getName().getId())).toUri());
+		headers.setLocation(linkTo(methodOn(getClass()).getProbe(plateauName,probeAdded.getName().getId())).toUri());
 		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 
@@ -112,7 +112,7 @@ public class DiscoveryManagerController {
 	 * @return
 	 */
 	@ApiOperation(value = "Executa comandos", nickname = "Executa comandos")
-	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/probe/{name}", produces = {
+	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/{plateauName}/probe/{probeName}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
 					MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { 
@@ -120,20 +120,20 @@ public class DiscoveryManagerController {
 			@ApiResponse(code = 400, message = "Bad Request"),
 			@ApiResponse(code = 409, message = "Conflit") })
 	@ResponseBody
-	public ProbeResource executeCommandProbe(@PathVariable("name") String name,
+	public ProbeResource executeCommandProbe(@PathVariable("plateauName") String plateauName,@PathVariable("probeName") String probeName,
 			@RequestBody(required = true) Collection<Command> commands) {
-		Probe probe = discoveryManager.executeCommand(new Identify<String>(name), commands);
+		Probe probe = discoveryManager.executeCommand(new Identify<String>(plateauName), new Identify<String>(probeName), commands);
 		return probeResourceAssembler.toResource(probe);
 	}
 	
 	/**
 	 * Executa os comandos da Sonda
-	 * @param name Nome da Sonda que realizará os movimentos
+	 * @param probeName Nome da Sonda que realizará os movimentos
 	 * @param commands Lista de Comandos
 	 * @return
 	 */
 	@ApiOperation(value = "Executa comandos para diversas Sondas", nickname = "Executa comandos para diversas Sondas")
-	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/probe", produces = {
+	@RequestMapping(method = RequestMethod.PUT, path = "/plateau/{plateauName}/probe", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
 					MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { 
@@ -141,8 +141,11 @@ public class DiscoveryManagerController {
 			@ApiResponse(code = 400, message = "Bad Request"),
 			@ApiResponse(code = 409, message = "Conflit") })
 	@ResponseBody
-	public List<CommandExecutionResource> executeCommandProbe(@RequestBody(required = true) Collection<CommandExecution<Identify<String>, String>> commands) {
-		Collection<CommandExecution<Identify<String>, String>> result = discoveryManager.executeCommand(commands);
+	public List<CommandExecutionResource> executeCommandProbe(@PathVariable("plateauName") String plateauName,@RequestBody(required = true) Collection<CommandExecution> commands) {
+		for(CommandExecution cmd : commands){
+			cmd.setPlateuName(new Identify<String>(plateauName));
+		}
+		Collection<CommandExecution> result = discoveryManager.executeCommand(new Identify<String>(plateauName), commands);
 		return commandExecutionResourceAssembler.toResources(result);
 	}
 
@@ -151,44 +154,44 @@ public class DiscoveryManagerController {
 	 * @return Sondas que estão no Planalto
 	 */
 	@ApiOperation(value = "obter Sondas", nickname = "obter Sondas")
-	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(method = RequestMethod.GET, path = "/plateau/{plateauName}/probe", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success") })
 	@ResponseBody
-	public List<ProbeResource> getProbes() {
-		Collection<Probe> probes = discoveryManager.getProbes();
+	public List<ProbeResource> getProbes(@PathVariable("plateauName") String plateauName) {
+		Collection<Probe> probes = discoveryManager.getProbesByPlateauName(new Identify<String>(plateauName));
 		return probeResourceAssembler.toResources(probes);
 	}
 
 	/**
 	 * Obter a Sonda através do seu nome
-	 * @param name Nome da Sonda
+	 * @param probeName Nome da Sonda
 	 * @return
 	 */
 	@ApiOperation(value = "obter Sonda", nickname = "obter Sonda")
-	@RequestMapping(method = RequestMethod.GET, path = "/plateau/probe/{name}", produces = {
+	@RequestMapping(method = RequestMethod.GET, path = "/plateau/{plateauName}/probe/{probeName}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Probe.class),
 			@ApiResponse(code = 404, message = "Not Found") })
 	@ResponseBody
-	public ProbeResource getProbe(@PathVariable("name") String name) {
-		Probe probe = discoveryManager.findProbeByName(new Identify<String>(name));
+	public ProbeResource getProbe(@PathVariable("plateauName") String plateauName,@PathVariable("probeName") String probeName) {
+		Probe probe = discoveryManager.findProbeByName(new Identify<String>(plateauName), new Identify<String>(probeName));
 		return probeResourceAssembler.toResource(probe);
 	}
 	
 	/**
 	 * Remove a sonda através do seu nome
-	 * @param name Nome da sonda que será removida
+	 * @param probeName Nome da sonda que será removida
 	 * @return
 	 */
 	@ApiOperation(value = "Remover Sonda", nickname = "Remover Sonda")
-	@RequestMapping(method = RequestMethod.DELETE, path = "/plateau/probe/{name}", produces = {
+	@RequestMapping(method = RequestMethod.DELETE, path = "/plateau/{plateauName}/probe/{probeName}", produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
 			@ApiResponse(code = 404, message = "Not Found") })
 	@ResponseBody
-	public ResponseEntity<Void> deleteProbe(@PathVariable("name") String name) {
-		discoveryManager.deleteProbeByName(new Identify<String>(name));
+	public ResponseEntity<Void> deleteProbe(@PathVariable("plateauName") String plateauName, @PathVariable("probeName") String probeName) {
+		discoveryManager.deleteProbeByName(new Identify<String>(plateauName), new Identify<String>(probeName));
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 }

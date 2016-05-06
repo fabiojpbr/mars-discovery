@@ -18,26 +18,29 @@ import sako.fabio.nasa.discovery.model.Probe;
 public interface DiscoveryManagerInterface {
 	/**
 	 * Adicionar uma Sonda no Planalto
-	 * @param name nome dado para sonda, é o seu identificador
+	 * @param plateauName nome do Planalto
+	 * @param probeName nome dado para sonda, é o seu identificador
 	 * @param coordination Coordenada inicial
 	 * @param direction Direção inicial
 	 * @return
 	 */
-	public Probe addProbe(Identify<String> name, Coordination coordination, Direction direction);
+	public Probe addProbe(Identify<String> plateauName, Identify<String> probeName, Coordination coordination, Direction direction);
 	
 	/**
 	 * Executa comandos da Sonda
-	 * @param name Nome da Sonda
+	 * @param plateauName nome do Planalto
+	 * @param probeName Nome da Sonda
 	 * @param commands Lista de comandos a ser executado
 	 * @return
 	 */
-	public Probe executeCommand(Identify<String> name, Collection<Command> commands);
+	public Probe executeCommand(Identify<String> plateauName, Identify<String> probeName, Collection<Command> commands);
 	/**
 	 * Executa uma sequencia de commando de uma lista de sondas
+	 * @param plateauName nome do Planalto
 	 * @param commandExecutions
 	 * @return
 	 */
-	public Collection<CommandExecution<Identify<String>, String>> executeCommand(Collection<CommandExecution<Identify<String>, String>> commandExecutions);
+	public Collection<CommandExecution> executeCommand(Identify<String> plateauName, Collection<CommandExecution> commandExecutions);
 
 	/**
 	 * Configura o Planalto
@@ -47,30 +50,35 @@ public interface DiscoveryManagerInterface {
 	public void setPlateau(Plateau plateau);
 	/**
 	 * Retorna lista de Sondas do Planalto
+	 * @param plateauName nome do Planalto
 	 * @return
 	 */
-	public Collection<Probe> getProbes();
+	public Collection<Probe> getProbesByPlateauName(Identify<String> plateauName);
 	
 	/**
 	 * Busca a sonda pelo seu nome
-	 * @param name
+	 * @param plateauName nome do Planalto
+	 * @param probeName
 	 * @return a Sonda solicitada
 	 */
-	public Probe findProbeByName(Identify<String> name);
+	public Probe findProbeByName(Identify<String> plateauName, Identify<String> probeName);
 	/**
 	 * Busca o Planalto
+	 * @param probeName Nome da Sonda
 	 * @return  Planalto
 	 */
-	public Plateau getPlateau();
+	public Plateau findPlateauByName(Identify<String> probeName);
 	
 	/**
 	 * Remove o Planalto atual
+	 * @param plateauName nome do Planalto
 	 */
-	public void deletePlateau();
+	public void deletePlateau(Identify<String> plateauName);
 
 	/**
 	 * Remove do Planalto a Sonda
-	 * @param identify identificador da Sonda que será removido
+	 * @param plateauName nome do Planalto
+	 * @param probeName identificador da Sonda que será removido
 	 */
-	public void deleteProbeByName(Identify<String> identify);
+	public void deleteProbeByName(Identify<String> plateauName, Identify<String> probeName);
 }
